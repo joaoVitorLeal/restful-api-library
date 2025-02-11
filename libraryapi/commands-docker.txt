@@ -1,0 +1,30 @@
+# Cria uma rede de conexão entre dois containers. (OBS: deve ser criado antes dos containers)
+sudo docker network create library-network
+
+# Rodar container Postgre na versão 16.3
+sudo docker run --name librarydb -p 5432:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres -e POSTGRES_DB=library --network library-network -d postgres:16.3
+
+# Rodar Pgadmin 4
+sudo docker run --name pgadmin4 -p 15432:80 -e PGADMIN_DEFAULT_EMAIL=joaoleal98@outlook.com -e PGADMIN_DEFAULT_PASSWORD=admin --network library-network -d dpage/pgadmin4
+
+
+# Comando utilitários:
+# Verificar containers inicializados
+sudo docker ps
+
+# Verificar a lista de todos os containers no host
+sudo docker ps -a
+
+# Deletar o container
+sudo docker container rm <nome_container>
+sudo docker rm <nome_container>
+
+# Forçar a deleção do container
+sudo docker container rm -f <<nome_container>>
+sudo docker rm -f <nome_container>
+
+ # Iniciar o container
+ sudo docker start <nome_container>
+
+ # Parar o container
+ sudo docker stop <nome_container>

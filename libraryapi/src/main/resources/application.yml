@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: libraryapi
+  datasource:
+    url: jdbc:postgresql://localhost:5432/library
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver # Caminho para o Driver.class (postgres) localizado nas livrarias externas
+
+  jpa:
+    show-sql: true # Exibe o SQL gerado no console
+    hibernate:
+      ddl-auto: none   # update: Atualiza o esquema do banco de dados conforme as entidades, sem apagar dados existentes
+                       # Opções:
+                       # none: Não faz nenhuma modificação no esquema do banco (padrão)
+                       # create-drop: Cria o esquema no início da aplicação e o apaga ao final da execução. Ideal para testes de integração
+    properties:
+      hibernate.format_sql: true # Realiza a indentação do SQL gerado e exibido no console. Facilitando a visualização

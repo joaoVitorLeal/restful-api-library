@@ -1,0 +1,406 @@
+/_____-----_____-----_____-----_____-----_____EN-US_____-----_____-----_____-----_____-----_____\
+
+# Author Registration
+Description
+
+This API allows for the registration, update, query, and deletion of book authors.
+Actors
+
+    Manager: Can create, update, and delete authors.
+
+    Operator: Can only query author data.
+
+Business Requested Fields
+
+Fields to be stored:
+
+    Name* (string)
+
+    Birth Date* (date)
+
+    Nationality* (string)
+
+Fields marked with () are required.*
+Logical Fields
+
+Non-business fields for application control and auditing:
+
+    ID (UUID)
+
+    Registration Date
+
+    Last Updated Date
+
+    Last Updated User
+
+Business Rules
+
+    Duplicate Check:
+
+        Authors with the same Name, Birth Date, and Nationality are considered duplicates and cannot be registered.
+
+    Deletion Restriction:
+
+        Authors associated with books cannot be deleted.
+
+API Contract
+Create a New Author
+
+    Request
+
+        URI: /authors
+
+        Method: POST
+
+        Body:
+        json
+        Copy
+
+        {
+          "name": "string",
+          "birthDate": "date",
+          "nationality": "string"
+        }
+
+    Response
+
+        Success:
+
+            Code: 201 Created
+
+            Header: Location (URI of the created resource).
+
+        Validation Error:
+
+            Code: 422 Unprocessable Entity
+
+            Body:
+            json
+            Copy
+
+            {
+              "status": 422,
+              "message": "Validation Error",
+              "errors": [
+                { "field": "name", "error": "Name is required" }
+              ]
+            }
+
+        Duplicate Author:
+
+            Code: 409 Conflict
+
+            Body:
+            json
+            Copy
+
+            {
+              "status": 409,
+              "message": "Duplicate Record",
+              "errors": []
+            }
+
+Get Author Details
+
+    Request
+
+        URI: /authors/{id}
+
+        Method: GET
+
+    Response
+
+        Success:
+
+            Code: 200 OK
+
+            Body:
+            json
+            Copy
+
+            {
+              "id": "uuid",
+              "name": "string",
+              "birthDate": "date",
+              "nationality": "string",
+              "registrationDate": "date",
+              "lastUpdatedDate": "date",
+              "lastUpdatedUser": "string"
+            }
+
+        Not Found:
+
+            Code: 404 Not Found
+
+Delete Author
+
+    Request
+
+        URI: /authors/{id}
+
+        Method: DELETE
+
+    Response
+
+        Success:
+
+            Code: 204 No Content
+
+        Error (Author has books):
+
+            Code: 400 Bad Request
+
+            Body:
+            json
+            Copy
+
+            {
+              "status": 400,
+              "message": "Deletion Error: Record is in use.",
+              "errors": []
+            }
+
+Search Authors
+
+    Request
+
+        URI: /authors
+
+        Query Params: name, nationality
+
+        Method: GET
+
+    Response
+
+        Success:
+
+            Code: 200 OK
+
+            Body:
+            json
+            Copy
+
+            [
+              {
+                "id": "uuid",
+                "name": "string",
+                "birthDate": "date",
+                "nationality": "string"
+              }
+            ]
+
+Update Author
+
+    Request
+
+        URI: /authors/{id}
+
+        Method: PUT
+
+        Body:
+        json
+        Copy
+
+        {
+          "name": "string",
+          "birthDate": "date",
+          "nationality": "string"
+        }
+
+    Response
+
+        Success:
+
+            Code: 204 No Content
+
+        Validation Error:
+
+            Code: 422 Unprocessable Entity
+
+            Body: Same as the "Create Author" validation error.
+
+        Duplicate Author:
+
+            Code: 409 Conflict
+
+            Body: Same as the "Create Author" duplicate error.
+
+Forms
+
+    Registration Form: (Placeholder for UI/form design)
+
+    Query Form: (Placeholder for UI/search design)
+
+
+/_____-----_____-----_____-----_____-----_____PT-BR_____-----_____-----_____-----_____-----_____\
+
+# Cadastro de Autor
+
+Descrição
+
+Deseja-se cadastrar os autores de livros, bem como realizar suas atualizações, consultas e permitir sua exclusão.
+Atores
+
+Somente o Gerente pode cadastrar, atualizar e remover Autores.
+
+O usuário Operador poderá somente consultar os dados dos Autores.
+Campos solicitados pelo Negócio
+
+Dados que deverão ser guardados:
+
+Nome *
+Data de Nascimento *
+
+    Nacionalidade *
+
+
+campos com (*) são obrigatórios
+Campos Lógicos
+
+Dados não solicitados pela equipe de negócio, mas são de controle da aplicação e auditoria:
+
+ID - UUID
+Data Cadastro
+Data Ultima Atualização
+
+    Usuário Ultima Atualização
+
+Regras de Negócio
+
+Não permitir cadastrar um Autor com mesmo Nome, Data de Nascimento e Nacionalidade, ou seja, se houver 2 autores com mesmos Nome, Data de Nascimento e Nacionalidade serão considerados repetidos, não permitir.
+
+    Não permitir excluir um Autor que possuir algum livro.
+
+Contrato API
+Cadastrar novo Autor
+- Requisição
+URI: /autores
+Método: POST
+Body:
+{
+  "nome": "string",
+  "dataNascimento": "date",
+  "nacionalidade": "string;
+}
+- Resposta
+1. Sucesso
+Código: 201 - Created
+Header: Location - URI do recurso criado
+2. Erro de Validação
+Código: 422 - Unprocessable Entity
+Body:
+{
+   "status": 422,
+   "message": "Erro de Validação",
+   "errors: [
+      { "field": "nome", "error": "Nome é obrigatório" }
+    ]
+}
+3. Autor Duplicado
+Código: 409 - Conflict
+Body:
+{
+   "status": 409,
+   "message": "Registro Duplicado",
+   "errors: []
+}
+Visualizar Detalhes do Autor
+- Requisição
+URI: /autores/{ID}
+Método: GET
+- Respostas
+1. Sucesso
+Código: 200 - OK
+Body:
+{
+  "id": "uuid",
+  "nome": "string",
+  "dataNascimento": "date",
+  "nacionalidade": "string;
+}
+2. Erro
+Código: 404 - Not Found
+Excluir  Autor
+- Requisição
+URI: /autores/{ID}
+Método: DELETE
+- Respostas
+1. Sucesso
+Código: 204 - No Content
+2. Erro
+Código: 400 - Bad Request
+Body:
+{
+   "status": 400,
+   "message": "Erro na exclusão: registro está sendo utilizado.",
+   "errors: []
+}
+Pesquisar Autores
+- Requisição
+URI: /autores
+Query Params: nome, nacionalidade
+Método: GET
+- Respostas
+1. Sucesso
+Código: 200 - OK
+Body:
+[{
+  "id": "uuid",
+  "nome": "string",
+  "dataNascimento": "date",
+  "nacionalidade": "string;
+}]
+Atualizar Autor
+- Requisição
+URI: /autores/{ID}
+Método: PUT
+Body:
+{
+  "nome": "string",
+  "dataNascimento": "date",
+  "nacionalidade": "string;
+}
+- Resposta
+1. Sucesso
+Código: 204 - No Content
+2. Erro de Validação
+Código: 422 - Unprocessable Entity
+Body:
+{
+   "status": 422,
+   "message": "Erro de Validação",
+   "errors: [
+      { "field": "nome", "error": "Nome é obrigatório" }
+    ]
+}
+3. Autor Duplicado
+Código: 409 - Conflict
+Body:
+{
+   "status": 409,
+   "message": "Registro Duplicado",
+   "errors: []
+}
+Formulário de Cadastro
+﻿
+﻿
+Formulário de Consulta
+﻿
+﻿
+
+
+    Cadastro de Autor
+    Descrição
+    Atores
+    Campos solicitados pelo Negócio
+    Campos Lógicos
+    Regras de Negócio
+    Contrato API
+    Cadastrar novo Autor
+    Visualizar Detalhes do Autor
+    Excluir Autor
+    Pesquisar Autores
+    Atualizar Autor
+    Formulário de Cadastro
+    Formulário de Consulta
+
