@@ -1,8 +1,36 @@
+# Arquivos específicos
+commands-sql.txt
 HELP.md
-target/
+
+# Build
+/target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# Arquivos temporários
+*.tmp
+*.temp
+
+# Configurações locais
+application-local*.properties
+application-dev*.yml
+/config/application-*.yml
+
+# Dependências
+/lib/
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Ambiente
+.env
 
 ### STS ###
 .apt_generated
