@@ -4,6 +4,7 @@ import io.github.joaoVitorLeal.libraryapi.models.Author;
 import io.github.joaoVitorLeal.libraryapi.models.Book;
 import io.github.joaoVitorLeal.libraryapi.models.BookGenre;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,13 +13,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
  * @see BookRepositoryTest
  */
 
-public interface BookRepository extends JpaRepository<Book, UUID> {
+public interface BookRepository extends JpaRepository<Book, UUID>, JpaSpecificationExecutor<Book> {
 
     /**
      * Para Maiores detalhes sobre os Queries Method's:
@@ -47,14 +49,12 @@ public interface BookRepository extends JpaRepository<Book, UUID> {
 
 
     /**
-     * Query Method: Recupera uma lista de livros cujo ISBN corresponde ao parâmetro fornecido.
-     * Internamente, o JPA executa a seguinte consulta SQL:
      * SELECT * FROM book WHERE isbn = ?;
      *
      * @param isbn O ISBN do livro a ser pesquisado.
-     * @return Lista de livros que possuem o ISBN especificado.
+     * @return livro que possui o ISBN especificado.
      */
-    List<Book> findByIsbn(String isbn);
+    Optional<Book> findByIsbn(String isbn);
 
 
     /**
@@ -171,4 +171,9 @@ public interface BookRepository extends JpaRepository<Book, UUID> {
 
 
     boolean existsByAuthor(Author author);
+
+    /// Utilizando a extensão do JpaSpecification para operações no db
+
+
+
 }

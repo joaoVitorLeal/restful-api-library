@@ -1,6 +1,6 @@
 package io.github.joaoVitorLeal.libraryapi.services;
 
-import io.github.joaoVitorLeal.libraryapi.exceptions.EntityInUseException;
+import io.github.joaoVitorLeal.libraryapi.exceptions.OperationNotPermittedException;
 import io.github.joaoVitorLeal.libraryapi.models.Author;
 import io.github.joaoVitorLeal.libraryapi.repositories.AuthorRepository;
 import io.github.joaoVitorLeal.libraryapi.repositories.BookRepository;
@@ -42,12 +42,12 @@ public class AuthorService {
 
     public void delete(Author author) {
         if(hasBook(author)) {
-            throw new EntityInUseException("Erro na exclusão: registro está sendo utilizado por outras entidades.");
+            throw new OperationNotPermittedException("Erro na exclusão: Não é permitido excluir um autor que possui livros cadastrados (registro está sendo utilizado por outras entidades.)");
         }
         authorRepository.delete(author);
     }
 
-    public List<Author> findAuthors(String name, String nationality) {
+    public List<Author> searchAuthors(String name, String nationality) {
         if (name != null && nationality != null) {
             return authorRepository.findByNameAndNationality(name, nationality);
         }
@@ -74,7 +74,7 @@ public class AuthorService {
                 .withIgnoreNullValues()
                 .withIgnorePaths("id", "birthDate", "createdAt") // Ignora os atributos da entidade que não farão parte da pesquisa. (Em casos o onde o recebe o author (entidade/objeto) como parâmetro)
                 .withIgnoreCase()
-                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING); // Buscar por uma String que contém o texto inforado
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING); // Buscar por uma String que contém o texto informado
         Example<Author> authorExample = Example.of(author, matcher);
         return  authorRepository.findAll(authorExample);
     }
