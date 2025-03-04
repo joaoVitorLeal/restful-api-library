@@ -5,10 +5,12 @@ import io.github.joaoVitorLeal.libraryapi.models.BookGenre;
 import io.github.joaoVitorLeal.libraryapi.repositories.BookRepository;
 import io.github.joaoVitorLeal.libraryapi.validator.BookValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,7 +37,15 @@ public class BookService {
     }
 
     // isbn, titulo, nome autor, genero, ano de publicacao
-    public List<Book> search(String isbn, String title, BookGenre genre, String authorName, Integer publicationYear) {
+    public Page<Book> search(
+            String isbn,
+            String title,
+            BookGenre genre,
+            String authorName,
+            Integer publicationYear,
+            Integer page,
+            Integer pageSize
+            ) {
 
         // select * from book where 0 = 0
         Specification<Book> specs = Specification.where((root, query, cb) -> cb.conjunction());
@@ -61,7 +71,9 @@ public class BookService {
             specs = specs.and(publicationYearEqual(publicationYear));
         }
 
-        return repository.findAll(specs);
+        Pageable pageRequest = PageRequest.of(page, pageSize); // PageRequest implementa a interface Pageable
+
+        return repository.findAll(specs, pageRequest);
     }
 
     public void update(Book book) {

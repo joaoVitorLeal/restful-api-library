@@ -17,7 +17,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * @see BookRepositoryTest
+ * see BookRepositoryTest
  */
 
 public interface BookRepository extends JpaRepository<Book, UUID>, JpaSpecificationExecutor<Book> {
