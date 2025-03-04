@@ -1,4 +1,4 @@
 package io.github.joaoVitorLeal.libraryapi.controllers.dtos;
 
-public record ValidationError(String field, String error) {
+public record ValidationErrorDTO(String field, String error) {
 }

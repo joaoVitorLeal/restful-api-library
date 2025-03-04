@@ -1,7 +1,8 @@
 package io.github.joaoVitorLeal.libraryapi.controllers.common;
 
-import io.github.joaoVitorLeal.libraryapi.controllers.dtos.ErrorResponse;
-import io.github.joaoVitorLeal.libraryapi.controllers.dtos.ValidationError;
+import io.github.joaoVitorLeal.libraryapi.controllers.dtos.ErrorResponseDTO;
+import io.github.joaoVitorLeal.libraryapi.controllers.dtos.ValidationErrorDTO;
+import io.github.joaoVitorLeal.libraryapi.exceptions.BusinessRuleException;
 import io.github.joaoVitorLeal.libraryapi.exceptions.DuplicateRegistrationException;
 import io.github.joaoVitorLeal.libraryapi.exceptions.OperationNotPermittedException;
 import org.springframework.http.HttpStatus;
@@ -19,33 +20,44 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class) // Realiza a captura e lança a exception
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY) // Mapeia e inclui no retorno do métod0 um Status HTTP do ResponseEntity
-    public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    public ErrorResponseDTO handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         List<FieldError> fieldErrors = e.getFieldErrors();
 
-        List<ValidationError> errorList = fieldErrors
+        List<ValidationErrorDTO> errorList = fieldErrors
                 .stream()
-                .map(fe -> new ValidationError(fe.getField(), fe.getDefaultMessage()))
+                .map(fe -> new ValidationErrorDTO(fe.getField(), fe.getDefaultMessage()))
                 .collect(Collectors.toList());
 
-        return new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(), "Erro de validação.", errorList);
+        return new ErrorResponseDTO(HttpStatus.UNPROCESSABLE_ENTITY.value(), "Erro de validação.", errorList);
     }
 
     @ExceptionHandler(DuplicateRegistrationException.class) // Objeto Exception que iremos receber para tratar
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleDuplicateRegistrationException (DuplicateRegistrationException e) {
-        return ErrorResponse.conflict(e.getMessage());
+    public ErrorResponseDTO handleDuplicateRegistrationException (DuplicateRegistrationException e) {
+        return ErrorResponseDTO.conflict(e.getMessage());
     }
 
     @ExceptionHandler(OperationNotPermittedException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleOperationNotPermittedException(OperationNotPermittedException e) {
-        return ErrorResponse.standardResponse(e.getMessage());
+    public ErrorResponseDTO handleOperationNotPermittedException(OperationNotPermittedException e) {
+        return ErrorResponseDTO.standardResponse(e.getMessage());
+    }
+
+    @ExceptionHandler(BusinessRuleException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    public ErrorResponseDTO handleBusinessRuleException(BusinessRuleException e) {
+        return new ErrorResponseDTO(
+                HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                "Erro de validação:.",
+                List.of(new ValidationErrorDTO(e.getField(), e.getMessage()))
+        );
+
     }
 
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleUntreatedErrors(RuntimeException e) {
-        return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Ocorreu um erro inesperado. Entre em contato com a administração.", List.of());
+    public ErrorResponseDTO handleUntreatedErrors(RuntimeException e) {
+        return new ErrorResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Ocorreu um erro inesperado. Entre em contato com a administração.", List.of());
     }
 
 }

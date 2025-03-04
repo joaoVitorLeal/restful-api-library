@@ -1,5 +1,6 @@
 package io.github.joaoVitorLeal.libraryapi.validator;
 
+import io.github.joaoVitorLeal.libraryapi.exceptions.BusinessRuleException;
 import io.github.joaoVitorLeal.libraryapi.exceptions.DuplicateRegistrationException;
 import io.github.joaoVitorLeal.libraryapi.models.Book;
 import io.github.joaoVitorLeal.libraryapi.repositories.BookRepository;
@@ -11,12 +12,23 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class BookValidator {
+
+    private static final int AND_PRICE_REQUIREMENT = 2020;
     private final BookRepository repository;
 
     public void validate(Book book) {
         if (doesBookExistsWithIsbn(book)) {
             throw new DuplicateRegistrationException("ISBN já cadastrado.");
         }
+
+        if (isMissingRequiredPrice(book)) {
+            throw new BusinessRuleException("value", "Para livros com ano de publicação a partir de 2020, o preço é obrigatório.");
+        }
+    }
+
+    private boolean isMissingRequiredPrice(Book book) {
+        return book.getValue() == null &&
+                book.getPublicationDate().getYear() >= AND_PRICE_REQUIREMENT;
     }
 
     private boolean doesBookExistsWithIsbn(Book book) {
