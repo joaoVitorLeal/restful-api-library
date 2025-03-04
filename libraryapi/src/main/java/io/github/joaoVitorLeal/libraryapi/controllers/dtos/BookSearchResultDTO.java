@@ -13,6 +13,6 @@ public record BookSearchResultDTO(
         LocalDate publicationDate,
         BookGenre genre,
         BigDecimal value,
-        AuthorRegistrationDTO authorRegistrationDto
+        AuthorResponseDTO author
     ) {
 }
