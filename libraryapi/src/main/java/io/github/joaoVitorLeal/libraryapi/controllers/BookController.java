@@ -8,12 +8,11 @@ import io.github.joaoVitorLeal.libraryapi.models.BookGenre;
 import io.github.joaoVitorLeal.libraryapi.services.BookService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/books")
@@ -51,17 +50,20 @@ public class BookController implements GenericController {
     }
 
     @GetMapping
-    public ResponseEntity<List<BookSearchResultDTO>> searchBooks(
+    public ResponseEntity<Page<BookSearchResultDTO>> searchBooks(
             @RequestParam(value = "isbn", required = false) String isbn,
             @RequestParam(value = "title", required = false) String title,
             @RequestParam(value = "book-genre", required = false) BookGenre genre,
             @RequestParam(value = "author-name", required = false) String authorName,
-            @RequestParam(value = "publication-year", required = false) Integer publicationYear
+            @RequestParam(value = "publication-year", required = false) Integer publicationYear,
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "page-size", defaultValue = "2") Integer pageSize
     ) {
-        var result = service.search(isbn, title, genre, authorName, publicationYear);
-        var bookList = result.stream().map(mapper::toDTO).collect(Collectors.toList());
+        var searchResultPage = service.search(isbn, title, genre, authorName, publicationYear, page, pageSize);
 
-        return ResponseEntity.ok(bookList);
+        Page<BookSearchResultDTO> resultDtoPage = searchResultPage.map(mapper::toDTO);
+
+        return ResponseEntity.ok(resultDtoPage);
     }
 
     @PutMapping("{id}")

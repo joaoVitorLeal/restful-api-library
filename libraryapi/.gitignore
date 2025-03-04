@@ -2,6 +2,7 @@
 commands-sql.txt
 HELP.md
 m7_descricao.txt
+require.txt
 
 # Build
 /target/

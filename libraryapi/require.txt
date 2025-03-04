@@ -381,13 +381,11 @@ Body:
    "message": "Registro Duplicado",
    "errors: []
 }
-Formulário de Cadastro
-﻿
-﻿
-Formulário de Consulta
-﻿
-﻿
 
+
+Formulário de Cadastro
+
+Formulário de Consulta
 
     Cadastro de Autor
     Descrição
