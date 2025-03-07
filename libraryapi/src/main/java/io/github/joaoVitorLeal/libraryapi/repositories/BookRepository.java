@@ -27,7 +27,7 @@ public interface BookRepository extends JpaRepository<Book, UUID>, JpaSpecificat
      * https://docs.spring.io/spring-data/jpa/reference/jpa/query-methods.html
      *
      * Query Method: Recupera uma lista de livros associados a um determinado autor.
-     * Este método pode retornar uma lista vazia, um único objeto ou múltiplos objetos,
+     * Este métod0 pode retornar uma lista vazia, um único objeto ou múltiplos objetos,
      * dependendo dos resultados encontrados.
      * Internamente, o JPA executa a seguinte consulta SQL:
      * SELECT * FROM book WHERE id_author = ?;
@@ -61,13 +61,13 @@ public interface BookRepository extends JpaRepository<Book, UUID>, JpaSpecificat
      * Query Method: Recupera uma lista de livros que correspondem simultaneamente ao título e ao valor fornecidos.
      * Utiliza o operador lógico AND para combinar as condições de busca.
      * Internamente, o JPA executa a seguinte consulta SQL:
-     * SELECT * FROM book WHERE title = ? AND value = ?;
+     * SELECT * FROM book WHERE title = ? AND price = ?;
      *
      * @param title O título do livro a ser pesquisado.
-     * @param value O valor associado ao livro.
+     * @param price O valor associado ao livro.
      * @return Lista de livros que correspondem aos critérios de busca.
      */
-    List<Book> findByTitleAndValue(String title, BigDecimal value);
+    List<Book> findByTitleAndPrice(String title, BigDecimal price);
 
 
     /**
@@ -101,8 +101,8 @@ public interface BookRepository extends JpaRepository<Book, UUID>, JpaSpecificat
      * JPQL -> referencia as entidades (Classes) e as propriedades */
     // Retornando uma lista de livros ordenada pelo título e preço
     // SQL -> select b.* from book as b order by b.title
-    @Query("select b from Book as b order by b.title, b.value")
-    List<Book> listAllByTitleAndValue();
+    @Query("select b from Book as b order by b.title, b.price")
+    List<Book> listAllByTitleAndPrice();
 
     /**
      * SQL ->

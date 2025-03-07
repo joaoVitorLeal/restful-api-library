@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @RestControllerAdvice // Capturar Exceptions trata e retorna uma resposta REST
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(MethodArgumentNotValidException.class) // Realiza a captura e lança a exception
+    @ExceptionHandler(MethodArgumentNotValidException.class) // Realiza a captura e lança a exception com o objeto Exception que iremos receber para tratar
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY) // Mapeia e inclui no retorno do métod0 um Status HTTP do ResponseEntity
     public ErrorResponseDTO handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         List<FieldError> fieldErrors = e.getFieldErrors();
@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
         return new ErrorResponseDTO(HttpStatus.UNPROCESSABLE_ENTITY.value(), "Erro de validação.", errorList);
     }
 
-    @ExceptionHandler(DuplicateRegistrationException.class) // Objeto Exception que iremos receber para tratar
+    @ExceptionHandler(DuplicateRegistrationException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponseDTO handleDuplicateRegistrationException (DuplicateRegistrationException e) {
         return ErrorResponseDTO.conflict(e.getMessage());
@@ -48,7 +48,7 @@ public class GlobalExceptionHandler {
     public ErrorResponseDTO handleBusinessRuleException(BusinessRuleException e) {
         return new ErrorResponseDTO(
                 HttpStatus.UNPROCESSABLE_ENTITY.value(),
-                "Erro de validação:.",
+                "Erro de validação:",
                 List.of(new ValidationErrorDTO(e.getField(), e.getMessage()))
         );
 
@@ -57,7 +57,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponseDTO handleUntreatedErrors(RuntimeException e) {
-        return new ErrorResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Ocorreu um erro inesperado. Entre em contato com a administração.", List.of());
+        return new ErrorResponseDTO(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "Ocorreu um erro inesperado. Entre em contato com a administração.",
+                List.of());
     }
 
 }

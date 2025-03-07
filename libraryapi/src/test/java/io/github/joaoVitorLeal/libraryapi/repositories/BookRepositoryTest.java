@@ -27,7 +27,7 @@ class BookRepositoryTest { // Classes de teste não necessitam ser 'public'
     void saveTest() { // Da mesma forma que as classes de teste, os seus métodos não necessitam ter modificadores de visibilidade (public, private, etc)
         Book book = new Book();
         book.setIsbn("10001-50405");
-        book.setValue(BigDecimal.valueOf(300.25));
+        book.setPrice(BigDecimal.valueOf(300.25));
         book.setGenre(BookGenre.SCIENCE);
         book.setTitle("Amphibious");
         book.setPublicationDate(LocalDate.of(2012 , 5, 11));
@@ -50,7 +50,7 @@ class BookRepositoryTest { // Classes de teste não necessitam ser 'public'
         // Criando livro
         Book book = new Book();
         book.setIsbn("302003-000023");
-        book.setValue(BigDecimal.valueOf(125.39));
+        book.setPrice(BigDecimal.valueOf(125.39));
         book.setGenre(BookGenre.SCIENCE);
         book.setTitle("Matemática para Burros");
         book.setPublicationDate(LocalDate.of(2014, 10, 28));
@@ -79,7 +79,7 @@ class BookRepositoryTest { // Classes de teste não necessitam ser 'public'
        // Criando livro
         Book book = new Book();
         book.setIsbn("555332-000010");
-        book.setValue(BigDecimal.valueOf(125.39));
+        book.setPrice(BigDecimal.valueOf(125.39));
         book.setGenre(BookGenre.MYSTERY);
         book.setTitle("Detective in Action");
         book.setPublicationDate(LocalDate.of(1980 , 3, 1));
@@ -171,11 +171,11 @@ class BookRepositoryTest { // Classes de teste não necessitam ser 'public'
     }
 
     @Test
-    void searchByTitleAndValueTest() {
+    void searchByTitleAndPriceTest() {
         String searchTitle = "UFO";
-        BigDecimal searchValue = BigDecimal.valueOf(100);
+        BigDecimal searchPrice = BigDecimal.valueOf(100);
 
-        List<Book> bookList = bookRepository.findByTitleAndValue(searchTitle, searchValue);
+        List<Book> bookList = bookRepository.findByTitleAndPrice(searchTitle, searchPrice);
         bookList.forEach(System.out::println);
     }
 
@@ -195,7 +195,7 @@ class BookRepositoryTest { // Classes de teste não necessitam ser 'public'
 
     @Test
     void bookListWithQueryJPQL() {
-        var result = bookRepository.listAllByTitleAndValue();
+        var result = bookRepository.listAllByTitleAndPrice();
         result.forEach(System.out::println);
     }
 
@@ -227,7 +227,7 @@ class BookRepositoryTest { // Classes de teste não necessitam ser 'public'
     // Positional Parameters
     @Test
     void listByGenreQueryPositionalParam() {
-        var result = bookRepository.findByGenrePositionalParameters(BookGenre.FICTION, "value");
+        var result = bookRepository.findByGenrePositionalParameters(BookGenre.FICTION, "price");
         result.forEach(System.out::println);
     }
 
