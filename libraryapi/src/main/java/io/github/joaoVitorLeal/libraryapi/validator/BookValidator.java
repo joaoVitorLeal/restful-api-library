@@ -22,13 +22,12 @@ public class BookValidator {
         }
 
         if (isMissingRequiredPrice(book)) {
-            throw new BusinessRuleException("value", "Para livros com ano de publicação a partir de 2020, o preço é obrigatório.");
+            throw new BusinessRuleException("price", "Para livros com ano de publicação a partir de 2020, o preço é obrigatório.");
         }
     }
 
     private boolean isMissingRequiredPrice(Book book) {
-        return book.getValue() == null &&
-                book.getPublicationDate().getYear() >= AND_PRICE_REQUIREMENT;
+        return book.getPrice() == null && book.getPublicationDate().getYear() >= AND_PRICE_REQUIREMENT;
     }
 
     private boolean doesBookExistsWithIsbn(Book book) {

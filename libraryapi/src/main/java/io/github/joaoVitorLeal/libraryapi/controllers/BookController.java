@@ -70,12 +70,14 @@ public class BookController implements GenericController {
     public ResponseEntity<Object> update(@PathVariable String id, @RequestBody @Valid BookRegistrationDTO dto){
         return service.getById(UUID.fromString(id))
                 .map(book -> {
+
                     Book mappedBook = mapper.toEntity(dto);
+
                     book.setIsbn(mappedBook.getIsbn());
                     book.setTitle(mappedBook.getTitle());
                     book.setPublicationDate(mappedBook.getPublicationDate());
                     book.setGenre(mappedBook.getGenre());
-                    book.setValue(mappedBook.getValue());
+                    book.setPrice(mappedBook.getPrice());
                     book.setAuthor(mappedBook.getAuthor());
 
                     service.update(book);

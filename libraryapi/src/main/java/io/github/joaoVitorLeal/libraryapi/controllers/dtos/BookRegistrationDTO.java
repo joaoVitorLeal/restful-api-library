@@ -24,7 +24,7 @@ public record BookRegistrationDTO(
 
         BookGenre genre,
 
-        BigDecimal value,
+        BigDecimal price,
 
         @NotNull(message = "Campo obrigatório.")
         UUID authorId
