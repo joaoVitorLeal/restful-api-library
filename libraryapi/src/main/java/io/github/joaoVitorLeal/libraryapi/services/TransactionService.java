@@ -53,7 +53,7 @@ public class TransactionService {
             // Salvado o livro
             Book book = new Book();
             book.setIsbn("302003-000023");
-            book.setValue(BigDecimal.valueOf(125.39));
+            book.setPrice(BigDecimal.valueOf(125.39));
             book.setGenre(BookGenre.SCIENCE);
             book.setTitle("Teste Matemática para Burros");
             book.setPublicationDate(LocalDate.of(2024, 10, 28));

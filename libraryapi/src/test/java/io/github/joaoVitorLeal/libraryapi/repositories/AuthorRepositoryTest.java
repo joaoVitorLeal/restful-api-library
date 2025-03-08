@@ -108,7 +108,7 @@ public class AuthorRepositoryTest {
         // Instanciando livro
         Book book = new Book();
         book.setIsbn("20012-22999");
-        book.setValue(BigDecimal.valueOf(357.58));
+        book.setPrice(BigDecimal.valueOf(357.58));
         book.setGenre(BookGenre.MYSTERY);
         book.setTitle("El Robo de La Casa Encantada");
         book.setPublicationDate(LocalDate.of(2020 , 3, 1));
@@ -116,7 +116,7 @@ public class AuthorRepositoryTest {
         // Instanciando o segundo livro
         Book book2 = new Book();
         book2.setIsbn("20012-22999");
-        book2.setValue(BigDecimal.valueOf(85));
+        book2.setPrice(BigDecimal.valueOf(85));
         book2.setGenre(BookGenre.ROMANCE);
         book2.setTitle("Corazon");
         book2.setPublicationDate(LocalDate.of(2016 , 1, 15));

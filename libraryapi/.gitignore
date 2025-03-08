@@ -1,4 +1,4 @@
-# Arquivos específicos
+# Files
 commands-sql.txt
 HELP.md
 m7_descricao.txt
@@ -15,23 +15,23 @@ logs/
 *.log
 *.log.*
 
-# Arquivos temporários
+# Temp files
 *.tmp
 *.temp
 
-# Configurações locais
+# Local configuration
 application-local*.properties
 application-dev*.yml
 /config/application-*.yml
 
-# Dependências
+# Dependencies
 /lib/
 
-# Sistema operacional
+# Operational system
 .DS_Store
 Thumbs.db
 
-# Ambiente
+# Environment
 .env
 
 ### STS ###

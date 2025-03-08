@@ -47,7 +47,6 @@ public class BookService {
             Integer pageSize
             ) {
 
-        // select * from book where 0 = 0
         Specification<Book> specs = Specification.where((root, query, cb) -> cb.conjunction());
 
         if (isbn != null) {

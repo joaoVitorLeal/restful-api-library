@@ -12,7 +12,7 @@ public record BookSearchResultDTO(
         String title,
         LocalDate publicationDate,
         BookGenre genre,
-        BigDecimal value,
+        BigDecimal price,
         AuthorResponseDTO author
     ) {
 }

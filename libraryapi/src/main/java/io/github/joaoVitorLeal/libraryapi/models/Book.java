@@ -38,8 +38,8 @@ public class Book {
     @Column(name = "genre", length = 30, nullable = false)
     private BookGenre genre;
 
-    @Column(name = "value", precision = 18, scale = 2) // 'precision' define o número total de dígitos (antes e depois do ponto decimal), e 'scale' especifica o número de casas decimais
-    private BigDecimal value;
+    @Column(name = "price", precision = 18, scale = 2) // 'precision' define o número total de dígitos (antes e depois do ponto decimal), e 'scale' especifica o número de casas decimais
+    private BigDecimal price;
 
     /**
      * Mapeamento objeto-relacional.
