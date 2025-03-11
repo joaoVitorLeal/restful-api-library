@@ -21,7 +21,7 @@ public class UserController implements GenericController {
     private final UserMapper mapper;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
+//    @ResponseStatus(HttpStatus.CREATED) // Utilizado caso o méto-do não retorne um ResponseEntity.algumStatus() . Ou seja quando o méto-do é 'void'.
     public ResponseEntity<Void> save(@RequestBody @Valid UserRegistrationDTO dto) {
         User user = mapper.toEntity(dto);
         service.save(user);
