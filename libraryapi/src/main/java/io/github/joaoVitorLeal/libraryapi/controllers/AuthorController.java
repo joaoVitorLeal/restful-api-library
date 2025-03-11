@@ -4,10 +4,16 @@ import io.github.joaoVitorLeal.libraryapi.controllers.dtos.AuthorRegistrationDTO
 import io.github.joaoVitorLeal.libraryapi.controllers.dtos.AuthorResponseDTO;
 import io.github.joaoVitorLeal.libraryapi.controllers.mappers.AuthorMapper;
 import io.github.joaoVitorLeal.libraryapi.models.Author;
+import io.github.joaoVitorLeal.libraryapi.models.User;
+import io.github.joaoVitorLeal.libraryapi.security.SecurityService;
 import io.github.joaoVitorLeal.libraryapi.services.AuthorService;
+import io.github.joaoVitorLeal.libraryapi.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -25,17 +31,16 @@ public class AuthorController implements GenericController {
     private final AuthorMapper mapper;
 
     @PostMapping
+    @PreAuthorize("hasRole('MANAGER')")
     public ResponseEntity<Void> save(@RequestBody @Valid AuthorRegistrationDTO dto) { // @RequestBody - Refere-se ao objeto vindo no corpo da requisição. Sendo transformado em um DTO
         Author author = mapper.toEntity(dto);
         service.save(author);
-
-        // Header: Location - URI do recurso criado
         URI location = headerLocationGenerator(author.getId());
-
         return ResponseEntity.created(location).build();
     }
 
     @GetMapping("{id}")
+    @PreAuthorize("hasAnyRole('MANAGER', 'OPERATOR')")
     public ResponseEntity<AuthorResponseDTO> getAuthorById(@PathVariable("id") String id) {
         var authorId = UUID.fromString(id);
 
@@ -48,20 +53,8 @@ public class AuthorController implements GenericController {
                 }).orElseGet(() -> ResponseEntity.notFound().build());  // .build() é usado para finalizar a construção de uma ResponseEntity sem corpo.
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<Void> delete(@PathVariable String id) {
-        var authorId = UUID.fromString(id);
-        Optional<Author> authorOptional = service.getById(authorId);
-
-        if (authorOptional.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        service.delete(authorOptional.get());
-        return ResponseEntity.noContent().build();
-    }
-
     @GetMapping
+    @PreAuthorize("hasAnyRole('MANAGER', 'OPERATOR')")
     public ResponseEntity<List<AuthorResponseDTO>> search(
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "nationality", required = false) String nationality) {
@@ -78,6 +71,7 @@ public class AuthorController implements GenericController {
     }
 
     @PutMapping("{id}")
+    @PreAuthorize("hasRole('MANAGER')")
     public ResponseEntity<Void> update(
             @PathVariable("id") String id,
             @RequestBody @Valid AuthorRegistrationDTO authorRegistrationDto) {
@@ -96,6 +90,20 @@ public class AuthorController implements GenericController {
 
         service.update(author);
 
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("{id}")
+    @PreAuthorize("hasRole('MANAGER')")
+    public ResponseEntity<Void> delete(@PathVariable String id) {
+        var authorId = UUID.fromString(id);
+        Optional<Author> authorOptional = service.getById(authorId);
+
+        if (authorOptional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        service.delete(authorOptional.get());
         return ResponseEntity.noContent().build();
     }
 }

@@ -19,7 +19,9 @@
         }
     </style>
 </head>
+
 <body>
+
 <div class="container">
     <div class="login-container">
         <h2 class="text-center mb-4">Login</h2>
@@ -34,7 +36,11 @@
             </div>
             <button type="submit" class="btn btn-primary w-100">Entrar</button>
         </form>
+        <br />
+        <hr />
+        <a th:href="@{/oauth2/authorization/google}" class="btn btn-primary w-100">Entrar com Google</a> <!-- Link de redirecionamento para autenticação com o OAuth2 da Google -->
     </div>
 </div>
+
 </body>
 </html>

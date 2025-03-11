@@ -6,6 +6,7 @@ import io.github.joaoVitorLeal.libraryapi.exceptions.BusinessRuleException;
 import io.github.joaoVitorLeal.libraryapi.exceptions.DuplicateRegistrationException;
 import io.github.joaoVitorLeal.libraryapi.exceptions.OperationNotPermittedException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -54,6 +55,20 @@ public class GlobalExceptionHandler {
 
     }
 
+    /*
+     * Tratando o caso de uso de acesso/operação não autorizada
+     * por um determinado grupo de usuários.
+     * */
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponseDTO handleAccessDeniedException(AccessDeniedException e) {
+        return new ErrorResponseDTO(
+                HttpStatus.FORBIDDEN.value(),
+                "Acesso negado.",
+                List.of()
+        );
+    }
+
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponseDTO handleUntreatedErrors(RuntimeException e) {
@@ -62,5 +77,4 @@ public class GlobalExceptionHandler {
                 "Ocorreu um erro inesperado. Entre em contato com a administração.",
                 List.of());
     }
-
 }
