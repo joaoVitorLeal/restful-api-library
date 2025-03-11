@@ -3,6 +3,7 @@ package io.github.joaoVitorLeal.libraryapi.services;
 import io.github.joaoVitorLeal.libraryapi.models.Book;
 import io.github.joaoVitorLeal.libraryapi.models.BookGenre;
 import io.github.joaoVitorLeal.libraryapi.repositories.BookRepository;
+import io.github.joaoVitorLeal.libraryapi.security.SecurityService;
 import io.github.joaoVitorLeal.libraryapi.validator.BookValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,9 +23,11 @@ public class BookService {
 
     private final BookRepository repository;
     private final BookValidator validator;
+    private final SecurityService securityService;
 
     public Book save(Book book) {
         validator.validate(book);
+        book.setUser(securityService.getAuthenticatedUser()); // Associa o usuário autenticado como responsável pelo registro do livro
         return repository.save(book);
     }
 

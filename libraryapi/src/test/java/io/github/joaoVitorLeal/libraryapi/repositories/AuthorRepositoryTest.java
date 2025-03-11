@@ -8,11 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
+import java.security.SecureRandom;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @SpringBootTest
 public class AuthorRepositoryTest {
@@ -53,6 +51,19 @@ public class AuthorRepositoryTest {
             authorRepositor.save(foundAuthor);
 
         }
+    }
+
+    @Test
+    public void generateSecurePassword() {
+        SecureRandom random= new SecureRandom();
+        byte[] bytes = new byte[16]; // 16 bytes = 128 bits
+        random.nextBytes(bytes);
+
+        String securePassword = Base64.getEncoder().encodeToString(bytes);
+        System.out.println("Senha codificada em Base64: " + securePassword);
+
+        byte[] decoderBytes = Base64.getDecoder().decode(securePassword);
+        System.out.println("O bytes decodificados: " +  Arrays.toString(decoderBytes));
     }
 
     @Test

@@ -16,3 +16,30 @@ spring:
                        # create-drop: Cria o esquema no início da aplicação e o apaga ao final da execução. Ideal para testes de integração
     properties:
       hibernate.format_sql: true # Realiza a indentação do SQL gerado e exibido no console. Facilitando a visualização
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+
+
+##  Propriedades para depuração de erro no Console  ##
+#server:
+#  error:
+#    include-message: always
+#    include-binding-errors: always
+#    include-stacktrace: always
+#    include-exception: true
+#
+#logging:
+#  level:
+#    root: INFO
+#    org.springframework.web: DEBUG
+#    org.springframework.boot: DEBUG
+#    org.springframework.web.servlet: DEBUG
+#    org.hibernate.SQL: DEBUG
+#    org.hibernate.type.descriptor.sql: TRACE
+#  pattern:
+#    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"

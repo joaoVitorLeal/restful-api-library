@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -23,15 +24,17 @@ public class BookController implements GenericController {
     private final BookMapper mapper;
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER')") // Se esta @Annotation for utilizada em cima da classe, essa configuração já será aplicada em todos os endpoints.
     public ResponseEntity<Void> save(@RequestBody @Valid BookRegistrationDTO dto) {
         Book book = mapper.toEntity(dto); // MAPEAR DTO PARA ENTIDADE - UTILIZANDO O mapstruct
         service.save(book); // ENVIAR A ENTIDADE PARA O SERVICE VALIDAR E SALVAR NO DATABASE
         var url = headerLocationGenerator(book.getId()); // CRIAR URL PARA ACESSO DOS DADOS DO LIVRO
-        return ResponseEntity.created(url).build(); // RETORNAR CODIGO CREATED COM HEADER LOCATION
+        return ResponseEntity.created(url).build(); // RETORNAR CÓDIGO CREATED COM HEADER LOCATION
 
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER')")
     public ResponseEntity<BookSearchResultDTO> getBook(@PathVariable String id){
         return service.getById(UUID.fromString(id))
                 .map(book -> {
@@ -41,6 +44,7 @@ public class BookController implements GenericController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER')")
     public ResponseEntity<Object> delete(@PathVariable String id) {
         return service.getById(UUID.fromString(id))
                 .map(book -> {
@@ -50,6 +54,7 @@ public class BookController implements GenericController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER')")
     public ResponseEntity<Page<BookSearchResultDTO>> searchBooks(
             @RequestParam(value = "isbn", required = false) String isbn,
             @RequestParam(value = "title", required = false) String title,
@@ -67,6 +72,7 @@ public class BookController implements GenericController {
     }
 
     @PutMapping("{id}")
+    @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER')")
     public ResponseEntity<Object> update(@PathVariable String id, @RequestBody @Valid BookRegistrationDTO dto){
         return service.getById(UUID.fromString(id))
                 .map(book -> {

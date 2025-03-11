@@ -1,5 +1,6 @@
 package io.github.joaoVitorLeal.libraryapi.controllers.dtos;
 
+import io.github.joaoVitorLeal.libraryapi.constants.ValidationMessages;
 import io.github.joaoVitorLeal.libraryapi.models.BookGenre;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -10,23 +11,26 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
+import static io.github.joaoVitorLeal.libraryapi.constants.ValidationMessages.*;
+
 public record BookRegistrationDTO(
-        @ISBN
-        @NotBlank(message = "Campo Obrigatório")
+        @ISBN(type = ISBN.Type.ANY, message = INVALID_ISBN_MESSAGE)
+        @NotBlank(message = REQUIRED_FIELD_MESSAGE)
         String isbn,
 
-        @NotBlank(message = "Campo obrigatório.")
+        @NotBlank(message = REQUIRED_FIELD_MESSAGE)
         String title,
 
-        @NotNull(message = "Campo obrigatório.")
-        @Past(message = "Data inválida. Só é permitido datas passadas!")
+        @Past(message = INVALID_DATE_MESSAGE)
+        @NotNull(message = REQUIRED_FIELD_MESSAGE)
         LocalDate publicationDate,
 
+        @NotBlank(message = REQUIRED_FIELD_MESSAGE)
         BookGenre genre,
 
         BigDecimal price,
 
-        @NotNull(message = "Campo obrigatório.")
+        @NotNull(message = REQUIRED_FIELD_MESSAGE)
         UUID authorId
     ) {
 }

@@ -1,14 +1,20 @@
 package io.github.joaoVitorLeal.libraryapi.models;
 
+import io.hypersistence.utils.hibernate.type.array.ListArrayType;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.Type;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "user", schema = "public")
+@Table(name = "users", schema = "public")
 @Data
 @EntityListeners(AuditingEntityListener.class)
 public class User {
@@ -17,16 +23,31 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column
-    private String login;
+    @Column(nullable = false)
+    private String name;
 
-    @Column
+    @Column(name = "birth_date")
+    private LocalDate birthDate;
+
+    @Column(nullable = false)
+    private String username;
+
+    @Column(nullable = false)
     private String password;
 
-    @Column(name = "roles")
-    private List<String> roles;
+    @Column(nullable = false)
+    private String email;
 
-    public User() {
-    }
+    @Type(ListArrayType.class) // Faz a tradução de List para Array
+    @Column(name = "roles", columnDefinition = "varchar[]", nullable = false)
+    private List<String> roles; // No Java é uma lista de Strings, mas no banco é um Array, para fazer essa conversão usaremos a biblioteca hypersistence
+
+    @CreatedDate
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(name = "last_updated_at", nullable = false)
+    private LocalDateTime lastUpdatedAt;
 
 }

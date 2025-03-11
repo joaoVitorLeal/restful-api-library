@@ -2,10 +2,13 @@ package io.github.joaoVitorLeal.libraryapi.services;
 
 import io.github.joaoVitorLeal.libraryapi.exceptions.OperationNotPermittedException;
 import io.github.joaoVitorLeal.libraryapi.models.Author;
+import io.github.joaoVitorLeal.libraryapi.models.User;
 import io.github.joaoVitorLeal.libraryapi.repositories.AuthorRepository;
 import io.github.joaoVitorLeal.libraryapi.repositories.BookRepository;
+import io.github.joaoVitorLeal.libraryapi.security.SecurityService;
 import io.github.joaoVitorLeal.libraryapi.validator.AuthorValidator;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
@@ -21,13 +24,16 @@ public class AuthorService {
     private final AuthorRepository authorRepository;
     private final AuthorValidator validator;
     private final BookRepository bookRepository;
+    private final SecurityService securityService;
 
     public Author save (Author author) {
         validator.validate(author);
+        User user = securityService.getAuthenticatedUser(); // Obtém o usuário autenticado que realizou a registro
+        author.setUser(user); // Associa o usuário ao autor registrado.
         return authorRepository.save(author);
     }
 
-    public void update(Author author) {
+    public void update(@NotNull Author author) {
         if(author.getId() == null) {
             throw new IllegalArgumentException("Para atualizar é necessário que o autor já esteja cadastrado na base de dados.");
         }

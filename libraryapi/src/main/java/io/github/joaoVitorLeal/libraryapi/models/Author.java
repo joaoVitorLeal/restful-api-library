@@ -50,6 +50,7 @@ public class Author {                          // Para que ela funcione deve ser
     @Column(name = "last_updated_at")
     private LocalDateTime lastUpdatedAt;
 
-    @Column(name = "user_id")
-    private UUID userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }

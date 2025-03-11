@@ -1,45 +1,47 @@
 package io.github.joaoVitorLeal.libraryapi.config;
 
+import io.github.joaoVitorLeal.libraryapi.security.CustomUserDetailsService;
+import io.github.joaoVitorLeal.libraryapi.security.LoginSocialSuccessHandler;
+import io.github.joaoVitorLeal.libraryapi.services.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true) // Habilita o uso de operações de segurança, como roles, authority, etc, nos Controllers da aplicação
 public class SecurityConfiguration {
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .csrf(AbstractHttpConfigurer::disable) // csrf() -> utilizado para proteção aplicação web. Para que a aplicação consiga fazer as requisições de forma autenticada ela deve enviar um Token CSRF de autenticação. para garantir que a página que enviou a requisição é da própria aplicação.  impede que páginas de outros sistemas consigam fazer requisição para nossa aplicação.
-                .httpBasic(Customizer.withDefaults()) // httpBasic() -> utilizado para outras aplicações se comunicarem com esta. Exemplo Postman Agent, sendo necessário informar user/password.
-                .formLogin(form -> form
-                        .loginPage("/login") // Customizando qual é a página de login da aplicação.
-                ) // formLogin() -> utilizado em Browser para usuários da aplicação, fromulário de login: user/password.
-                .authorizeHttpRequests(authorize -> {
-                    authorize.requestMatchers("/login").permitAll(); // Permite que qualquer tipo de usuário acesse a página de Login (URI)
-                    authorize.requestMatchers("/authors/**").hasRole("ADMIN");
-                    authorize.requestMatchers("/books/**").hasAnyRole("USER", "ADMIN");
-                    authorize.anyRequest().authenticated(); // Exige autenticação para qualquer requisição que não seja as que foram mapeadas com requestMatchers().
-                    // anyRequest() - Deve ficar por último pois qualquer regra após o anyRequest() será IGNORADA!
 
-                    ///* MAIS EXEMPLOS: Realizando controle de requisições utilizando Roles e Athority dos usuários indicando quais Http Methods (requisições) podem ser feitas por tipo de usuário(USER ou ADMIN) */
-                    //authorize.requestMatchers(HttpMethod.POST, "/authors/**").hasRole("ADMIN");
-                    //authorize.requestMatchers(HttpMethod.POST, "/authors/**").hasAuthority("CADASTRAR_AUTOR");
-                    //authorize.requestMatchers(HttpMethod.DELETE, "/authors/**").hasRole("ADMIN");
-                    //authorize.requestMatchers(HttpMethod.PUT, "/authors/**").hasRole("ADMIN");
-                    //authorize.requestMatchers(HttpMethod.GET, "/authors/**").hasAnyRole("USER", "ADMIN");
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, LoginSocialSuccessHandler successHandler) throws Exception {
+        return http
+                .csrf(AbstractHttpConfigurer::disable)
+                .httpBasic(Customizer.withDefaults())
+                .formLogin(form ->
+                        form.loginPage("/login")
+                )
+                .authorizeHttpRequests(authorize -> {
+                    authorize.requestMatchers("/login").permitAll();
+                    authorize.requestMatchers(HttpMethod.POST, "/users/**").permitAll();
+
+                    authorize.anyRequest().authenticated(); // Caso não seja configurado uma regra de acesso para determinar as roles, ele cairá nesta regra. E Apesar de estarem autenticado, não terá autorização para realizar requisições
+                })
+                // Habilita o login via OAuth2 (não configurado, mas habilitado por padrão)
+                .oauth2Login(oauth2 -> {
+                    oauth2
+                            .loginPage("/login")
+                            .successHandler(successHandler); // Passando a autenticação do Google já configurada para nossa aplicação em LoginSocialSuccessHandler.class
                 })
                 .build();
     }
@@ -47,31 +49,24 @@ public class SecurityConfiguration {
     // Codificador de senhas
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(10); // Configura o BCrypt com fator de custo 10, isso significa que o algoritmo realizará 2^10 (1024) iterações para gerar o hash.
+        return new BCryptPasswordEncoder(10);
     }
 
-    /*
-     * Neste caso iremos criar usuários em memória e
-     * não utilizar usuários de uma base de dados.
-     * */
+
+    /**
+     * @Deprecated -
+     * Provia a autenticação através do UserDetails.
+     * Agora sendo realizada no @see CustomAuthenticationProvider
+     */
+//    @Bean ** ao comentar essa annotation esse métod0 deixa de ser 'visível'/gerenciado pela aplicação.
+    @Deprecated
+    protected UserDetailsService userDetailsService(UserService userService) {
+        return new CustomUserDetailsService(userService);
+    }
+
+    // Utilizando para remover o prefíxo 'ROLE_' do Security. Também é possível customizar prefíxos.
     @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder encoder) {
-
-        /* Criando instâncias de usuários em memória */
-        UserDetails user1 = User.builder()
-                .username("usuario")
-                .password(encoder.encode("123"))
-                .roles("USER")
-                .build();
-
-        UserDetails user2 = User.builder()
-                .username("admin")
-                .password(encoder.encode("321"))
-                .roles("ADMIN")
-                .build();
-
-
-        return new InMemoryUserDetailsManager(user1, user2);
+    public GrantedAuthorityDefaults grantedAuthorityDefaults(){
+        return new GrantedAuthorityDefaults("");
     }
 }
-//.formLogin(configurer -> configurer.loginPage("/login.html").successForwardUrl("/home.html")) // loginPage() -> indica a url de uma página html de login && successForwardUrl() -> redireciona para página caso o login seja bem sucedido.
