@@ -23,7 +23,7 @@ public class ClientService {
         return repository.save(client);
     }
 
-    public Optional<Client> getByClientId(String clientId) {
+    public Optional<Client> findByClientId(String clientId) {
         return repository.findByClientId(clientId);
     }
 }

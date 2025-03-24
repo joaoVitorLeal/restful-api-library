@@ -4,6 +4,7 @@ import io.github.joaoVitorLeal.libraryapi.security.CustomAuthentication;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller // Controller para páginas Web
@@ -23,4 +24,11 @@ public class LoginViewController {
         return "Olá " + authentication.getName();
     }
 
+    // Autenticação via Authorization Code.
+    // Passa o código gerado (code) para que o Authorization Server possa liberar o token de acesso.
+    @GetMapping("/authorized")
+    @ResponseBody
+    public String getAuthorizationCode(@RequestParam("code") String code) {
+        return "Seu Authorization Code: " + code;
+    }
 }

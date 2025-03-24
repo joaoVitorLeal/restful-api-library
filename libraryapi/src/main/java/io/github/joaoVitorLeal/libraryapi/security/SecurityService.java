@@ -26,7 +26,7 @@ public class SecurityService {
 
     /*
      * Devido à implementação de uma autenticação customizada em CustomAuthentication.class,
-     * foi necessário reconfigurar o SecurityService.class, e este méto-do para obter o usuário
+     * foi necessário reconfigurar o SecurityService.class, e este méto-do tinha como função obter o usuário
      * do local correto. Como a aplicação deixou de utilizar UserDetails, este méto-do tornou-se obsoleto.
      *
      * @Deprecated
