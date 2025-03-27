@@ -16,7 +16,7 @@ public class ClientValidator {
 
     public void validate(Client client) {
         if (isClientRegistered(client)) {
-            throw new DuplicateRegistrationException("Registro duplicado");
+            throw new DuplicateRegistrationException("Duplicate Registration");
         }
     }
 

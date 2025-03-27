@@ -16,7 +16,7 @@ public class AuthorValidator {
 
     public void validate(Author author) {
         if (isAuthorRegistered(author)){
-            throw new DuplicateRegistrationException("Registro Duplicado");
+            throw new DuplicateRegistrationException("Duplicate Registration");
         }
     }
 

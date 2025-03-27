@@ -5,6 +5,7 @@ import io.github.joaoVitorLeal.libraryapi.controllers.dtos.ValidationErrorDTO;
 import io.github.joaoVitorLeal.libraryapi.exceptions.BusinessRuleException;
 import io.github.joaoVitorLeal.libraryapi.exceptions.DuplicateRegistrationException;
 import io.github.joaoVitorLeal.libraryapi.exceptions.OperationNotPermittedException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
@@ -17,19 +18,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice // Capturar Exceptions trata e retorna uma resposta REST
+@Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class) // Realiza a captura e lança a exception com o objeto Exception que iremos receber para tratar
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY) // Mapeia e inclui no retorno do métod0 um Status HTTP do ResponseEntity
     public ErrorResponseDTO handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        log.error("Validation error: {}", e.getMessage());
         List<FieldError> fieldErrors = e.getFieldErrors();
-
         List<ValidationErrorDTO> errorList = fieldErrors
                 .stream()
                 .map(fe -> new ValidationErrorDTO(fe.getField(), fe.getDefaultMessage()))
                 .collect(Collectors.toList());
 
-        return new ErrorResponseDTO(HttpStatus.UNPROCESSABLE_ENTITY.value(), "Erro de validação.", errorList);
+        return new ErrorResponseDTO(HttpStatus.UNPROCESSABLE_ENTITY.value(), "Validation error:", errorList);
     }
 
     @ExceptionHandler(DuplicateRegistrationException.class)
@@ -49,7 +51,7 @@ public class GlobalExceptionHandler {
     public ErrorResponseDTO handleBusinessRuleException(BusinessRuleException e) {
         return new ErrorResponseDTO(
                 HttpStatus.UNPROCESSABLE_ENTITY.value(),
-                "Erro de validação:",
+                "Validation error:",
                 List.of(new ValidationErrorDTO(e.getField(), e.getMessage()))
         );
 
@@ -64,7 +66,7 @@ public class GlobalExceptionHandler {
     public ErrorResponseDTO handleAccessDeniedException(AccessDeniedException e) {
         return new ErrorResponseDTO(
                 HttpStatus.FORBIDDEN.value(),
-                "Acesso negado.",
+                "Access denied.",
                 List.of()
         );
     }
@@ -72,9 +74,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponseDTO handleUntreatedErrors(RuntimeException e) {
+        log.error("Unexpected error - Error details:", e); // Gera um log de erro interno do servidor com maiores detalhes.
         return new ErrorResponseDTO(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "Ocorreu um erro inesperado. Entre em contato com a administração.",
+                "An unexpected error occurred. Please contact the administration.",
                 List.of());
     }
 }

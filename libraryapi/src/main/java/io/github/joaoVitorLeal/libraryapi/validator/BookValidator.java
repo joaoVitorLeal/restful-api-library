@@ -18,11 +18,11 @@ public class BookValidator {
 
     public void validate(Book book) {
         if (doesBookExistsWithIsbn(book)) {
-            throw new DuplicateRegistrationException("ISBN já cadastrado.");
+            throw new DuplicateRegistrationException("ISBN already registered.");
         }
 
         if (isMissingRequiredPrice(book)) {
-            throw new BusinessRuleException("price", "Para livros com ano de publicação a partir de 2020, o preço é obrigatório.");
+            throw new BusinessRuleException("price", "For books with a publication year from 2020 onwards, the price is mandatory.");
         }
     }
 

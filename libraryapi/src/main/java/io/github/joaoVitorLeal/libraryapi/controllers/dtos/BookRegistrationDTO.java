@@ -25,7 +25,7 @@ public record BookRegistrationDTO(
         @NotNull(message = REQUIRED_FIELD_MESSAGE)
         LocalDate publicationDate,
 
-        @NotBlank(message = REQUIRED_FIELD_MESSAGE)
+        @NotNull(message = REQUIRED_FIELD_MESSAGE)
         BookGenre genre,
 
         BigDecimal price,

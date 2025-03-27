@@ -9,6 +9,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -26,10 +27,15 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, LoginSocialSuccessHandler successHandler, JwtCustomAuthenticationFilter jwtCustomAuthenticationFilter) throws Exception {
 
-        return http.csrf(AbstractHttpConfigurer::disable).httpBasic(Customizer.withDefaults()).formLogin(form -> form.loginPage("/login")).authorizeHttpRequests(authorize -> {
+        return http
+//                .httpBasic(Customizer.withDefaults()) // Removido na etapa de Documentação com Swagger
+                .csrf(AbstractHttpConfigurer::disable)
+                .formLogin(configurer ->
+                        configurer.loginPage("/login")
+                )
+                .authorizeHttpRequests(authorize -> {
                     authorize.requestMatchers("/login").permitAll();
                     authorize.requestMatchers(HttpMethod.POST, "/users/**").permitAll();
-
                     authorize.anyRequest().authenticated(); // Caso não seja configurado uma regra de acesso para determinar as roles, ele cairá nesta regra. E Apesar de estarem autenticado, não terá autorização para realizar requisições
                 })
                 // Habilita o login via OAuth2 (não configurado, mas habilitado por padrão)
@@ -38,6 +44,20 @@ public class SecurityConfiguration {
                 }).oauth2ResourceServer(oauth2RS -> oauth2RS.jwt(Customizer.withDefaults()))  // Habilitando JTW para validar usuário na aplicação. Será o Token Padrão.
                 .addFilterAfter(jwtCustomAuthenticationFilter, BearerTokenAuthenticationFilter.class)
                 .build();
+    }
+
+    // Doc: Configura o Spring Security para ignorar a autenticação em requisições relacionadas à documentação da API (Swagger) e o Actuator. Ignorando os filtros do Security nas requisições vindas de URL's do Swagger e Actuator adicionadas
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return web -> web.ignoring().requestMatchers(
+                "/v2/api-docs/**",
+                "/v3/api-docs/**",
+                "/swagger-resources/**",
+                "/swagger-ui.html/**",
+                "/swagger-ui/**",
+                "/webjars/**",
+                "/actuator/**"
+            );
     }
 
     // CONFIGURA O PREFIXO SCOPE NO SECURITY
