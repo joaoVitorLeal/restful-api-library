@@ -16,5 +16,5 @@ public record ClientRegistrationDTO(
 
         @NotBlank(message =  REQUIRED_FIELD_MESSAGE)
         String scope
-) {
+    ) {
 }

@@ -14,7 +14,7 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository repository;
-    private final PasswordEncoder encoder; // Criptografia configurada. @see SecurityConfiguration
+    private final PasswordEncoder encoder;
 
     public void save(User user) {
         var password = user.getPassword();
@@ -25,7 +25,7 @@ public class UserService {
 
     public void update(User user) {
         if (user.getId() == null) {
-            throw new IllegalArgumentException("Para atualizar é necessário que o usuário já esteja cadastrado na base de dados.");
+            throw new IllegalArgumentException("To update, the user must already be registered in the database.");
         }
         repository.save(user);
     }

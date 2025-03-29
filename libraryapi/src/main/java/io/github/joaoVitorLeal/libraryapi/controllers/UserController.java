@@ -11,16 +11,18 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
 
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
-@Tag(name = "User")
+@Tag(name = "User") // Swagger documentation
 @Slf4j
 public class UserController implements GenericController {
 
@@ -28,13 +30,13 @@ public class UserController implements GenericController {
     private final UserMapper mapper;
 
     @PostMapping
-//    @ResponseStatus(HttpStatus.CREATED) // Utilizado caso o méto-do não retorne um ResponseEntity.algumStatus() . Ou seja quando o méto-do é 'void'.
-    @Operation(summary = "Save", description = "Register a new User.")
+    @Operation(summary = "Save", description = "Register a new user.")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Successfully registered.")
+            @ApiResponse(responseCode = "201", description = "User successfully registered.")
     })
     public ResponseEntity<Void> save(@RequestBody @Valid UserRegistrationDTO dto) {
-        log.info("Registered a new User of username '{}', e-mail '{}' and roles '{}'.", dto.username(), dto.email(), dto.roles());
+        log.info("Registering new user: username='{}', email='{}', roles={}.",
+                dto.username(), dto.email(), dto.roles());
 
         User user = mapper.toEntity(dto);
         service.save(user);

@@ -7,8 +7,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+/**
+ * Adapts the internal User model to Spring Security's UserDetails.
+ */
 @RequiredArgsConstructor
-public class CustomUserDetailsService implements UserDetailsService { // Fonte de usuários
+public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserService service;
 
@@ -17,13 +20,13 @@ public class CustomUserDetailsService implements UserDetailsService { // Fonte d
         io.github.joaoVitorLeal.libraryapi.models.User userModel = service.findByUsername(username);
 
         if (userModel == null) {
-            throw new UsernameNotFoundException("Usuário não encontrado.");
+            throw new UsernameNotFoundException("User not found.");
         }
 
         return User.builder()
                 .username(userModel.getUsername())
                 .password(userModel.getPassword())
-                .roles(userModel.getRoles().toArray(new String[userModel.getRoles().size()])) // Obtém as roles do usuário (Lista de Strings), mas precisamos prover um Array de Strings (toArray(new String[...])) do tamanho da lista de roles [userModel.getRoles().size].
+                .roles(userModel.getRoles().toArray(new String[userModel.getRoles().size()]))
                 .build();
     }
 }

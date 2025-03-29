@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+/**
+ * Ensures clientId remains unique across all registrations
+ */
 @Component
 @RequiredArgsConstructor
 public class ClientValidator {
@@ -20,6 +23,7 @@ public class ClientValidator {
         }
     }
 
+    // Handles edge case where client updates shouldn't fail on their own clientId
     private boolean isClientRegistered(Client client) {
         Optional<Client> foundClient = repository.findByClientId(client.getClientId());
 

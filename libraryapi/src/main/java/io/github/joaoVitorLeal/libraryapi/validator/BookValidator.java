@@ -9,6 +9,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+/**
+ * Enforces two business rules:
+ * 1. ISBN must be unique
+ * 2. Books published after 2020 require price
+ */
 @Component
 @RequiredArgsConstructor
 public class BookValidator {
@@ -30,6 +35,7 @@ public class BookValidator {
         return book.getPrice() == null && book.getPublicationDate().getYear() >= AND_PRICE_REQUIREMENT;
     }
 
+    // Special ISBN check that permits updates to existing books
     private boolean doesBookExistsWithIsbn(Book book) {
         Optional<Book> possibleBook = repository.findByIsbn(book.getIsbn());
 
@@ -37,12 +43,6 @@ public class BookValidator {
             return possibleBook.isPresent();
         }
 
-        // Verifica se existe um livro com o mesmo ISBN, mas com um ID diferente do livro fornecido.
-        // Se 'possibleBook' contém um livro, obtemos seu ID, transformamos em um Stream e verificamos
-        // se algum ID é diferente do ID do livro passado como argumento.
-        return possibleBook
-                .map(Book::getId)
-                .stream()
-                .anyMatch(id -> !id.equals(book.getId()));
+        return possibleBook.map(Book::getId).stream().anyMatch(id -> !id.equals(book.getId()));
     }
 }

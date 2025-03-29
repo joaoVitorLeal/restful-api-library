@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RestControllerAdvice // Capturar Exceptions trata e retorna uma resposta REST
+@RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(MethodArgumentNotValidException.class) // Realiza a captura e lança a exception com o objeto Exception que iremos receber para tratar
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY) // Mapeia e inclui no retorno do métod0 um Status HTTP do ResponseEntity
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     public ErrorResponseDTO handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.error("Validation error: {}", e.getMessage());
         List<FieldError> fieldErrors = e.getFieldErrors();
@@ -57,10 +57,6 @@ public class GlobalExceptionHandler {
 
     }
 
-    /*
-     * Tratando o caso de uso de acesso/operação não autorizada
-     * por um determinado grupo de usuários.
-     * */
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponseDTO handleAccessDeniedException(AccessDeniedException e) {

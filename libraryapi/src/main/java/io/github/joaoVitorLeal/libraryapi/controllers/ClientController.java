@@ -16,9 +16,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("clients")
+@RequestMapping("/clients")
 @RequiredArgsConstructor
-@Tag(name = "Client")
+@Tag(name = "Client") // Swagger documentation
 @Slf4j
 public class ClientController {
 
@@ -26,14 +26,14 @@ public class ClientController {
     private final ClientMapper mapper;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED) // Utilizado caso o méto-do não retorne um ResponseEntity.algumStatus() . Ou seja quando o méto-do é 'void'.
+    @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('MANAGER')")
-    @Operation(summary = "Save", description = "Register a new Client.")
+    @Operation(summary = "Save", description = "Register a new client.")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Successfully registered.")
+            @ApiResponse(responseCode = "201", description = "Client successfully registered.")
     })
     public void save(@RequestBody @Valid ClientRegistrationDTO dto) {
-        log.info("Registered the new Client: {} with scope {}", dto.clientId(), dto.scope());
+        log.info("Registering new client: ID='{}', scope='{}'.", dto.clientId(), dto.scope());
         Client client = mapper.toEntity(dto);
         service.save(client);
     }

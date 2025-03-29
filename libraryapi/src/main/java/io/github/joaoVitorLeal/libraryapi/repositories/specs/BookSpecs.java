@@ -8,8 +8,6 @@ import org.springframework.data.jpa.domain.Specification;
 
 public class BookSpecs {
 
-    // isbn, titulo, nome autor, genero, ano de publicacao
-    // WHERE isbn = :isbn
     public static Specification<Book> isbnEqual(String isbn) {
         return (root, query, cb) -> cb.equal(root.get("isbn"), isbn);
     }
@@ -23,12 +21,19 @@ public class BookSpecs {
         return (root, query, cb) -> cb.equal(root.get("genre"), genre);
     }
 
+    /**
+     * Filters books by publication year using SQL's to_char function.
+     */
     public static Specification<Book> publicationYearEqual(Integer publicationYear) {
         // and to_char(publication_date, 'YYYY') = :publication_date;
         return (root, query, cb) ->
                 cb.equal( cb.function("to_char", String.class, root.get("publicationDate"), cb.literal("YYYY")), publicationYear.toString());
     }
 
+
+    /**
+     * Filters books by author name (case-insensitive, left join).
+     */
     public static Specification<Book> authorNameLike (String authorName) {
         return (root, query, cb) -> {
             Join<Object, Object> joinAuthor = root.join("author", JoinType.LEFT);
@@ -36,7 +41,7 @@ public class BookSpecs {
         };
     }
 
-    @Deprecated
+    @Deprecated // Use authorNameLike() instead for better performance.
     public static Specification<Book> easyAuthorNameLike (String authorName) {
         return (root, query, cb) -> {
             return cb.like( cb.upper(root.get("author").get("name")),  "%" + authorName.toUpperCase() + "%" );

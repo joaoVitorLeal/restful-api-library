@@ -18,7 +18,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor // Injeção automática dos atributos que sejam FINAL no construtor
+@RequiredArgsConstructor
 public class AuthorService {
 
     private final AuthorRepository authorRepository;
@@ -26,18 +26,17 @@ public class AuthorService {
     private final BookRepository bookRepository;
     private final SecurityService securityService;
 
-    public Author save (Author author) {
+    public Author save(Author author) {
         validator.validate(author);
-        User user = securityService.getAuthenticatedUser(); // Obtém o usuário autenticado que realizou a registro
-        author.setUser(user); // Associa o usuário ao autor registrado.
+        User user = securityService.getAuthenticatedUser();
+        author.setUser(user);
         return authorRepository.save(author);
     }
 
     public void update(@NotNull Author author) {
-        if(author.getId() == null) {
-            throw new IllegalArgumentException("Para atualizar é necessário que o autor já esteja cadastrado na base de dados.");
+        if (author.getId() == null) {
+            throw new IllegalArgumentException("Cannot update an author that does not exist.");
         }
-
         validator.validate(author);
         authorRepository.save(author);
     }
@@ -47,29 +46,23 @@ public class AuthorService {
     }
 
     public void delete(Author author) {
-        if(hasBook(author)) {
-            throw new OperationNotPermittedException("Erro na exclusão: Não é permitido excluir um autor que possui livros cadastrados (registro está sendo utilizado por outras entidades.)");
+        if (hasBook(author)) {
+            throw new OperationNotPermittedException("Cannot delete an author with registered books.");
         }
         authorRepository.delete(author);
     }
 
     public List<Author> searchAuthors(String name, String nationality) {
+        if (name == null && nationality == null) {
+            return authorRepository.findAll();
+        }
         if (name != null && nationality != null) {
             return authorRepository.findByNameAndNationality(name, nationality);
         }
-
-        if (name != null) {
-            return authorRepository.findByName(name);
-        }
-
-        if (nationality != null) {
-            return authorRepository.findByNationality(nationality);
-        }
-
-        return authorRepository.findAll();
+        return (name != null) ? authorRepository.findByName(name) : authorRepository.findByNationality(nationality);
     }
 
-    ///  Utilizando Query By Example para pesquisas dinâmicas ///
+    // ByExample query
     public List<Author> searchAuthorsByExample(String name, String nationality) {
         var author = new Author();
         author.setName(name);
@@ -78,11 +71,11 @@ public class AuthorService {
         ExampleMatcher matcher = ExampleMatcher
                 .matching()
                 .withIgnoreNullValues()
-                .withIgnorePaths("id", "birthDate", "createdAt") // Ignora os atributos da entidade que não farão parte da pesquisa. (Em casos o onde o recebe o author (entidade/objeto) como parâmetro)
+                .withIgnorePaths("id", "birthDate", "createdAt")
                 .withIgnoreCase()
-                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING); // Buscar por uma String que contém o texto informado
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
         Example<Author> authorExample = Example.of(author, matcher);
-        return  authorRepository.findAll(authorExample);
+        return authorRepository.findAll(authorExample);
     }
 
     public boolean hasBook(Author author) {

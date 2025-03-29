@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 /**
+ * Tests transaction behavior demonstration methods
  * @see TransactionService
  */
 
@@ -16,17 +17,18 @@ public class TransactionsTest {
     TransactionService transactionService;
 
     /**
-     * Commit \\
-     * Rollback
-     * @Transactional - Abre uma transação e caso uma das operações falhe ele aciona o 'Rollback'.
+     * Tests atomic transaction with potential rollback
      */
     @Test
     void simpleTransaction() {
         transactionService.execute();
     }
 
+    /**
+     * Demonstrates JPA's automatic dirty checking
+     */
     @Test
     void transacaoEstadoManeged() {
-        transactionService.atualizacaoSemAtualizar();
+        transactionService.updateWithoutUpdating();
     }
 }

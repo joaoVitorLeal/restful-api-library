@@ -23,10 +23,10 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/authors") // http://localhost:8080/authors
-@RequiredArgsConstructor // Injeção automática dos atributos que sejam FINAL no construtor
-@Tag(name = "Authors") // Doc: Customização da documentação (Swagger)
-@Slf4j // Habilita um objeto de log para classe. Logs inseridos em save(), update(), delete()
+@RequestMapping("/authors")
+@RequiredArgsConstructor
+@Tag(name = "Authors") // Swagger documentation
+@Slf4j
 public class AuthorController implements GenericController {
 
     private final AuthorService service;
@@ -34,14 +34,14 @@ public class AuthorController implements GenericController {
 
     @PostMapping
     @PreAuthorize("hasRole('MANAGER')")
-    @Operation(summary = "Save", description = "Register a new author.") // Doc
-    @ApiResponses({ // Doc: Possíveis respostas à esta requisição. Recebe um Array de ApiResponse
-            @ApiResponse(responseCode = "201", description = "Successfully registered."),
-            @ApiResponse(responseCode = "422", description = "Validation error."),
+    @Operation(summary = "Save", description = "Register a new author.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Author successfully registered."),
+            @ApiResponse(responseCode = "422", description = "Invalid input data."),
             @ApiResponse(responseCode = "409", description = "Author already exists.")
     })
-    public ResponseEntity<Void> save(@RequestBody @Valid AuthorRegistrationDTO dto) { // @RequestBody - Refere-se ao objeto vindo no corpo da requisição. Sendo transformado em um DTO
-       log.info("Register new author of name '{}'.", dto.name()); // Log: de cadastro de autor
+    public ResponseEntity<Void> save(@RequestBody @Valid AuthorRegistrationDTO dto) {
+        log.info("Registering new author: '{}'.", dto.name());
 
         Author author = mapper.toEntity(dto);
         service.save(author);
@@ -51,10 +51,10 @@ public class AuthorController implements GenericController {
 
     @GetMapping("{id}")
     @PreAuthorize("hasAnyRole('MANAGER', 'OPERATOR')")
-    @Operation(summary = "Get an Author By ID", description = "Retrieve an author's data by ID.") // Doc
-    @ApiResponses({ // Doc
+    @Operation(summary = "Get an Author By ID", description = "Retrieve author details by ID.")
+    @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Author found."),
-            @ApiResponse(responseCode = "422", description = "Author not found.")
+            @ApiResponse(responseCode = "404", description = "Author not found.")
     })
     public ResponseEntity<AuthorResponseDTO> getAuthorById(@PathVariable("id") String id) {
         var authorId = UUID.fromString(id);
@@ -62,17 +62,16 @@ public class AuthorController implements GenericController {
         return service
                 .getById(authorId)
                 .map(author -> {
-
                     AuthorResponseDTO dto = mapper.toDTO(author);
                     return ResponseEntity.ok(dto);
-                }).orElseGet(() -> ResponseEntity.notFound().build());  // .build() é usado para finalizar a construção de uma ResponseEntity sem corpo.
+                }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping
     @PreAuthorize("hasAnyRole('MANAGER', 'OPERATOR')")
-    @Operation(summary = "Search", description = "Search for authors using name and nationality parameters.") // Doc
-    @ApiResponses({ // Doc
-            @ApiResponse(responseCode = "200", description = "Author found."),
+    @Operation(summary = "Search", description = "Search authors by name or nationality.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Authors retrieved successfully.")
     })
     public ResponseEntity<List<AuthorResponseDTO>> search(
             @RequestParam(value = "name", required = false) String name,
@@ -81,7 +80,6 @@ public class AuthorController implements GenericController {
         List<Author> authorList = service.searchAuthorsByExample(name, nationality);
         List<AuthorResponseDTO> dtoList = authorList
                 .stream()
-                // Para cada elemento author, o métod0 toDTO da instância mapper é chamado.
                 .map(mapper::toDTO)
                 .collect(Collectors.toList());
 
@@ -90,16 +88,15 @@ public class AuthorController implements GenericController {
 
     @PutMapping("{id}")
     @PreAuthorize("hasRole('MANAGER')")
-    @Operation(summary = "Update", description = "Update an existing author") // Doc
-    @ApiResponses({ // Doc
-            @ApiResponse(responseCode = "204", description = "Successfully updated."),
+    @Operation(summary = "Update", description = "Update an existing author.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Author updated successfully."),
             @ApiResponse(responseCode = "404", description = "Author not found."),
-            @ApiResponse(responseCode = "409", description = "Author already exists."),
-            @ApiResponse(responseCode = "401", description = "Unauthorized")
+            @ApiResponse(responseCode = "409", description = "Author conflicts with existing data."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access.")
     })
     public ResponseEntity<Void> update(@PathVariable("id") String id, @RequestBody @Valid AuthorRegistrationDTO dto) {
-
-        log.info("Updating the author of id '{}' and name '{}'.", id, dto.name()); // Log: de atualização de autor
+        log.info("Updating author ID: '{}'.", id);
 
         var authorId = UUID.fromString(id);
         Optional<Author> authorOptional = service.getById(authorId);
@@ -114,20 +111,19 @@ public class AuthorController implements GenericController {
         author.setNationality(dto.nationality());
 
         service.update(author);
-
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("{id}")
     @PreAuthorize("hasRole('MANAGER')")
-    @Operation(summary = "Delete", description = "Delete an existing author") // Doc
-    @ApiResponses({ // Doc
-            @ApiResponse(responseCode = "204", description = "Successfully deleted."),
+    @Operation(summary = "Delete", description = "Delete an existing author.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Author deleted successfully."),
             @ApiResponse(responseCode = "404", description = "Author not found."),
-            @ApiResponse(responseCode = "400", description = "Author has registered books and cannot be deleted.")
+            @ApiResponse(responseCode = "400", description = "Author cannot be deleted (e.g., linked books exist).")
     })
     public ResponseEntity<Void> delete(@PathVariable String id) {
-        log.info("Deleting the author of ID: {}.", id); // Log: de deleção de autor
+        log.info("Deleting author ID: '{}'.", id);
         var authorId = UUID.fromString(id);
         Optional<Author> authorOptional = service.getById(authorId);
 

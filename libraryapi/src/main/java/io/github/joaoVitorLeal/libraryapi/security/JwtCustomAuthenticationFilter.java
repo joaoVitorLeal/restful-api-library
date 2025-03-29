@@ -15,6 +15,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+/**
+ * Converts JWT-based authentication into a custom authentication object,
+ * ensuring integration between external JWT providers and our internal system.
+ */
 @Component
 @RequiredArgsConstructor
 public class JwtCustomAuthenticationFilter extends OncePerRequestFilter {
@@ -35,17 +39,13 @@ public class JwtCustomAuthenticationFilter extends OncePerRequestFilter {
             User user = userService.findByUsername(username);
             if (user != null) {
                 authentication = new CustomAuthentication(user);
-                // Sobrescreve a authentication do oauth2 pela authentication personalizada da aplicação (CustomAuthentication)
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
 
         }
 
         filterChain.doFilter(request, response);
-
     }
-
-
 
     private boolean shouldConverter(Authentication authentication) {
         return authentication != null && authentication instanceof JwtAuthenticationToken;

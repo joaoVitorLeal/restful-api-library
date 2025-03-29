@@ -10,7 +10,6 @@ import java.util.UUID;
 import static io.github.joaoVitorLeal.libraryapi.constants.ValidationMessages.*;
 
 public record UserRegistrationDTO(
-
         UUID id,
 
         @NotBlank(message =  REQUIRED_FIELD_MESSAGE)
@@ -34,5 +33,5 @@ public record UserRegistrationDTO(
 
         @NotEmpty(message = REQUIRED_FIELD_MESSAGE)
         List<String> roles
-) {
+    ) {
 }

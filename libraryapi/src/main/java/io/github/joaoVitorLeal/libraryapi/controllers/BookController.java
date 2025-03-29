@@ -22,26 +22,25 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/books")
 @RequiredArgsConstructor
-@Tag(name = "Books")
+@Tag(name = "Books") // Swagger documentation
 public class BookController implements GenericController {
 
     private final BookService service;
     private final BookMapper mapper;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER')") // Se esta @Annotation for utilizada em cima da classe, essa configuração já será aplicada em todos os endpoints.
+    @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER')")
     @Operation(summary = "Save", description = "Register a new book.")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Successfully registered."),
-            @ApiResponse(responseCode = "422", description = "Validation error."),
+            @ApiResponse(responseCode = "201", description = "Book successfully registered."),
+            @ApiResponse(responseCode = "422", description = "Invalid input data."),
             @ApiResponse(responseCode = "409", description = "Book already exists.")
     })
     public ResponseEntity<Void> save(@RequestBody @Valid BookRegistrationDTO dto) {
-        Book book = mapper.toEntity(dto); // MAPEAR DTO PARA ENTIDADE - UTILIZANDO O mapstruct
-        service.save(book); // ENVIAR A ENTIDADE PARA O SERVICE VALIDAR E SALVAR NO DATABASE
-        var url = headerLocationGenerator(book.getId()); // CRIAR URL PARA ACESSO DOS DADOS DO LIVRO
-        return ResponseEntity.created(url).build(); // RETORNAR CÓDIGO CREATED COM HEADER LOCATION
-
+        Book book = mapper.toEntity(dto);
+        service.save(book);
+        var url = headerLocationGenerator(book.getId());
+        return ResponseEntity.created(url).build();
     }
 
     @GetMapping("/{id}")

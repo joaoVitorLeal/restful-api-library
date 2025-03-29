@@ -7,28 +7,26 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-@Controller // Controller para páginas Web
+@Controller
 public class LoginViewController {
 
     @GetMapping("/login")
-    public String showLoginPage() { // Utilizando String para indicar qual página HTML ele deve ir quando esta requisição(GET) for chamada
+    public String showLoginPage() {
         return "login";
     }
 
     @GetMapping("/")
-    @ResponseBody // Ao utilizar esta @annotation, retornará a resposta diretamente no corpo da requisição, em vez de renderizar uma página HTML
+    @ResponseBody
     public String showHomePage(Authentication authentication) {
-        if(authentication instanceof CustomAuthentication customAuth) {
+        if (authentication instanceof CustomAuthentication customAuth) {
             System.out.println(customAuth.getUser());
         }
-        return "Olá " + authentication.getName();
+        return "Hello, " + authentication.getName();
     }
 
-    // Autenticação via Authorization Code.
-    // Passa o código gerado (code) para que o Authorization Server possa liberar o token de acesso.
     @GetMapping("/authorized")
     @ResponseBody
     public String getAuthorizationCode(@RequestParam("code") String code) {
-        return "Seu Authorization Code: " + code;
+        return "Your Authorization Code: " + code;
     }
 }

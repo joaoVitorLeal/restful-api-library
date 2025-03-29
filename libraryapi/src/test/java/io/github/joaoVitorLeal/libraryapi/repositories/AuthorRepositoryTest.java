@@ -24,7 +24,7 @@ public class AuthorRepositoryTest {
     @Test
     public void saveTest() {
         Author author = new Author();
-    author.setName("John");
+        author.setName("John");
         author.setBirthDate(LocalDate.of(1990, 7, 4));
         author.setNationality("American");
 
@@ -35,35 +35,27 @@ public class AuthorRepositoryTest {
     @Test
     public void updateTest() {
         var id = UUID.fromString("e8023bad-a3d5-4775-aadf-3c9fc6a93020");
-
-        Optional<Author> possibleAuthor =  authorRepositor.findById(id);
+        Optional<Author> possibleAuthor = authorRepositor.findById(id);
 
         if (possibleAuthor.isPresent()) {
-
             Author foundAuthor = possibleAuthor.get();
-            System.out.println("Author's data:");
-            System.out.println(foundAuthor);
-
             foundAuthor.setName("Tânia");
             foundAuthor.setBirthDate(LocalDate.of(1964, 12, 27));
             foundAuthor.setNationality("Russian");
-
             authorRepositor.save(foundAuthor);
-
         }
     }
 
+    /**
+     * Demonstrates secure password generation
+     */
     @Test
     public void generateSecurePassword() {
         SecureRandom random= new SecureRandom();
-        byte[] bytes = new byte[16]; // 16 bytes = 128 bits
+        byte[] bytes = new byte[16];
         random.nextBytes(bytes);
-
         String securePassword = Base64.getEncoder().encodeToString(bytes);
-        System.out.println("Senha codificada em Base64: " + securePassword);
-
-        byte[] decoderBytes = Base64.getDecoder().decode(securePassword);
-        System.out.println("O bytes decodificados: " +  Arrays.toString(decoderBytes));
+        System.out.println("Base64 encoded password: " + securePassword);
     }
 
     @Test
@@ -74,41 +66,33 @@ public class AuthorRepositoryTest {
 
     @Test
     public void countTest() {
-        System.out.println("Contagem de autores: " + authorRepositor.count());
+        System.out.println("Author count: " + authorRepositor.count());
     }
 
     @Test
     void searchAuthorTest() {
         UUID id = UUID.fromString("8cef4f0e-28f5-45cd-8db4-caca17a91a36");
         Optional<Author> author = authorRepositor.findById(id);
-
-        if (author.isPresent()) {
-            System.out.println(author.get());
-        }
+        author.ifPresent(System.out::println);
     }
 
     @Test
     public void deleteByIdTest() {
         var id = UUID.fromString("...");
         Optional<Author> possibleAuthor = authorRepositor.findById(id);
-
-        if (possibleAuthor.isPresent()) {
-            Author foundAuthor = possibleAuthor.get();
-            authorRepositor.deleteById(id);
-        }
+        possibleAuthor.ifPresent(author -> authorRepositor.deleteById(id));
     }
 
     @Test
     public void deleteTest() {
         var id = UUID.fromString("...");
         Optional<Author> possibleAuthor = authorRepositor.findById(id);
-
-        if (possibleAuthor.isPresent()) {
-            Author foundAuthor = possibleAuthor.get();
-            authorRepositor.delete(foundAuthor);
-        }
+        possibleAuthor.ifPresent(authorRepositor::delete);
     }
 
+    /**
+     * Tests author-book relationship persistence
+     */
     @Test
     void saveAuthorWithBookListTest() {
         Author author = new Author();
@@ -116,7 +100,6 @@ public class AuthorRepositoryTest {
         author.setNationality("Spanish");
         author.setBirthDate(LocalDate.of(2000, 8, 10));
 
-        // Instanciando livro
         Book book = new Book();
         book.setIsbn("20012-22999");
         book.setPrice(BigDecimal.valueOf(357.58));
@@ -124,7 +107,7 @@ public class AuthorRepositoryTest {
         book.setTitle("El Robo de La Casa Encantada");
         book.setPublicationDate(LocalDate.of(2020 , 3, 1));
         book.setAuthor(author);
-        // Instanciando o segundo livro
+
         Book book2 = new Book();
         book2.setIsbn("20012-22999");
         book2.setPrice(BigDecimal.valueOf(85));
@@ -133,37 +116,23 @@ public class AuthorRepositoryTest {
         book2.setPublicationDate(LocalDate.of(2016 , 1, 15));
         book2.setAuthor(author);
 
-        // Adicionando os livros instanciados à lista de livros do autor
         author.setBooks(new ArrayList<>());
         author.getBooks().add(book);
         author.getBooks().add(book2);
 
-        // Primeiramente devamos salvar o autor no database e em seguida a lista de livros
         authorRepositor.save(author);
-
-        // Salvando a lista de livros vinculado ao autor
         bookRepository.saveAll(author.getBooks());
     }
 
     /**
-     * Este Métod0 realiza a busca de lista livros por id do autor informado.
-     * Foi necessário criar uma busca de livros personalizada por meio de Query_Methods, criada em BookRepository,
-     * devido ao comportamento LAZY da relação entre as tabelas.
-     * */
+     * Tests custom query method for lazy loading workaround
+     */
     @Test
-//    @Transactional // Garante que o métod0 seja executado dentro de um contexto de transação aberta, permitindo o gerenciamento automático de transações pelo Spring.
     void listAuthorBooksTest() {
         var id = UUID.fromString("8cef4f0e-28f5-45cd-8db4-caca17a91a36");
         var author = authorRepositor.findById(id).get();
-
-        // Buscar os livros do autor
-        List<Book> bookList = bookRepository.findByAuthor(author); // findByAuthor -> Query Methods (busca personalizada).
+        List<Book> bookList = bookRepository.findByAuthor(author);
         author.setBooks(bookList);
-
         author.getBooks().forEach(System.out::println);
-
-
-
     }
-
 }
