@@ -3,6 +3,7 @@ package io.github.joaoVitorLeal.libraryapi.services;
 import io.github.joaoVitorLeal.libraryapi.models.Book;
 import io.github.joaoVitorLeal.libraryapi.models.BookGenre;
 import io.github.joaoVitorLeal.libraryapi.repositories.BookRepository;
+import io.github.joaoVitorLeal.libraryapi.security.SecurityService;
 import io.github.joaoVitorLeal.libraryapi.validator.BookValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,12 +20,13 @@ import static io.github.joaoVitorLeal.libraryapi.repositories.specs.BookSpecs.*;
 @Service
 @RequiredArgsConstructor
 public class BookService {
-
     private final BookRepository repository;
     private final BookValidator validator;
+    private final SecurityService securityService;
 
     public Book save(Book book) {
         validator.validate(book);
+        book.setUser(securityService.getAuthenticatedUser());
         return repository.save(book);
     }
 
@@ -36,7 +38,6 @@ public class BookService {
         repository.delete(book);
     }
 
-    // isbn, titulo, nome autor, genero, ano de publicacao
     public Page<Book> search(
             String isbn,
             String title,
@@ -45,41 +46,31 @@ public class BookService {
             Integer publicationYear,
             Integer page,
             Integer pageSize
-            ) {
-
+    ) {
         Specification<Book> specs = Specification.where((root, query, cb) -> cb.conjunction());
 
-        if (isbn != null) {
-            // query = query and isbn = :isbn
+        if (isbn != null)
             specs = specs.and(isbnEqual(isbn));
-        }
 
-        if (title != null) {
+        if (title != null)
             specs = specs.and(titleLike(title));
-        }
 
-        if (genre != null) {
+        if (genre != null)
             specs = specs.and(genreEqual(genre));
-        }
 
-        if (authorName != null) {
+        if (authorName != null)
             specs = specs.and(authorNameLike(authorName));
-        }
 
-        if (publicationYear != null) {
+        if (publicationYear != null)
             specs = specs.and(publicationYearEqual(publicationYear));
-        }
 
-        Pageable pageRequest = PageRequest.of(page, pageSize); // PageRequest implementa a interface Pageable
-
-        return repository.findAll(specs, pageRequest);
+        return repository.findAll(specs, PageRequest.of(page, pageSize));
     }
 
     public void update(Book book) {
         if (book.getId() == null) {
-            throw new IllegalArgumentException("Para atualizar, é necessário que o livro já esteja cadastrado na base de dados.");
+            throw new IllegalArgumentException("To update, the book must already be registered in the database.");
         }
-
         validator.validate(book);
         repository.save(book);
     }

@@ -8,17 +8,15 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Mapper(componentModel = "spring", uses = {AuthorMapper.class}) // uses = utilizado quando é necessário mapear ou utilizar outro mapper para um outro objeto
+@Mapper(componentModel = "spring", uses = {AuthorMapper.class})
 public abstract class BookMapper {
 
     @Autowired
     AuthorRepository authorRepository;
 
-    // Mapeia de DTO para Entidade
     @Mapping(target = "author", expression = "java( authorRepository.findById(dto.authorId()).orElse(null) )")
     public abstract Book toEntity(BookRegistrationDTO dto);
 
-    // Mapeia de Entidade para DTO
     @Mapping(target = "author")
     public abstract BookSearchResultDTO toDTO(Book book);
 }

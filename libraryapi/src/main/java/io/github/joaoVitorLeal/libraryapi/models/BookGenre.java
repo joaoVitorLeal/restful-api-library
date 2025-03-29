@@ -7,5 +7,4 @@ public enum BookGenre {
     ROMANCE,
     BIOGRAPHY,
     SCIENCE
-
 }

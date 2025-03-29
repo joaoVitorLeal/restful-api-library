@@ -3,8 +3,8 @@ package io.github.joaoVitorLeal.libraryapi.exceptions;
 import lombok.Getter;
 
 /**
- * Exceção lançada quando um livro publicado após 2020 não possui preço informado.
- * Essa regra de negócio garante que livros recentes tenham um valor obrigatório.
+ * Thrown when a post-2020 book has no price defined.
+ * This business rule ensures recent books have a mandatory price.
  */
 public class BusinessRuleException extends RuntimeException{
 
