@@ -36,71 +36,66 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-/*
-* Authorization Server personalizada para esta aplicação
-* */
+
 @Configuration
 @EnableWebSecurity
 public class AuthorizationServerConfiguration {
 
-    /*
-    * Configuração para habilíta o Authorization Server
-    * */
     @Bean
-    @Order(1) // Define a ordem que este filter chain vai ficar. Neste caso ele é o principal (1) da aplicação.
+    @Order(1)
     public SecurityFilterChain authServerSecurityFilterChain(HttpSecurity http) throws Exception {
 
-        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http); // Habilitando o AuthorizationServer na aplicação
+        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
 
         http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
-                .oidc(Customizer.withDefaults()); // Habilitando o OpenIdConnect (Plugin do oauth2 que permite com que com Token obtido, obter detalhes como quem foi que o gerou, quem é o usuário)
+                .oidc(Customizer.withDefaults());
 
-        http.oauth2ResourceServer(oauth2RS -> oauth2RS.jwt(Customizer.withDefaults())); // Habilita o Token JWT e verifica o Token foi gerado por este Authorization Server para quem usá-lo
+        http.oauth2ResourceServer(oauth2RS -> oauth2RS.jwt(Customizer.withDefaults()));
 
         http.formLogin(configurer -> configurer.loginPage("/login"));
 
+        // Returning the configured HTTP security filter chain
         return http.build();
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(10);
+        return new BCryptPasswordEncoder(10); // Password encoder with a strength of 10
     }
 
     @Bean
     public TokenSettings tokenSettings() {
+        // Configures token settings for the OAuth2 server, such as token lifetime
         return TokenSettings.builder()
-                .accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED) // Formato de Token
-                // access_token: token utilizado nas requisições
-                .accessTokenTimeToLive(Duration.ofMinutes(60)) // Tempo de duração do Token
-                // refresh_token: token para renovar o access_token
-                .refreshTokenTimeToLive(Duration.ofMinutes(90)) // O tempo de duração do Token é estendido
+                .accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED)
+                .accessTokenTimeToLive(Duration.ofMinutes(60))
+                .refreshTokenTimeToLive(Duration.ofMinutes(90))
                 .build();
     }
 
     @Bean
     public ClientSettings clientSettings() {
+        // Configures client settings for the OAuth2 authorization server
         return ClientSettings.builder()
                 .requireAuthorizationConsent(false)
                 .build();
     }
 
-    // JWK - gera tokens JWK (JSON Web Key). Representação em JSON de uma chave criptográfica usadas em processos de autenticação e assinatura digital. Necessário quando se trabalha com JWT para que o JWK assine o Token.
     @Bean
     public JWKSource<SecurityContext> jwkSource() throws Exception {
-        RSAKey rsaKey = generateRSAKey(); // Gerando chave RSA, utiliza criptografia assimétrica. É um méto-do de criptografia que consiste em duas chaves, uma pública que serve para criptografar os dados, e outra privada utilizada para descriptografar dados que foram criptografados com a chave pública. Somente o Authorization Server conhece a chave privada.
-        JWKSet jwkSet = new JWKSet(rsaKey); // recebe uma jwkKey
-        return new ImmutableJWKSet<>(jwkSet);
+        RSAKey rsaKey = generateRSAKey(); // Generates a new RSA key for JWT signing
+        JWKSet jwkSet = new JWKSet(rsaKey);
+        return new ImmutableJWKSet<>(jwkSet); // Immutable JWK set to be used by the authorization server
     }
 
-    // Méto-do auxiliar para gerar chaves RSA
     private RSAKey generateRSAKey() throws Exception {
+        // Generates a new RSA key pair for JWT signing
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-        keyPairGenerator.initialize(2048); // Inicializando chave com 2048 bits
-        KeyPair keyPair = keyPairGenerator.generateKeyPair(); // Gerando o par de chaves
+        keyPairGenerator.initialize(2048);
+        KeyPair keyPair = keyPairGenerator.generateKeyPair();
 
-        RSAPublicKey publicKey =  (RSAPublicKey) keyPair.getPublic(); // Obtendo RSA público
-        RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate(); // Obtendo RSA privado
+        RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
+        RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
 
         return new RSAKey
                 .Builder(publicKey)
@@ -111,31 +106,24 @@ public class AuthorizationServerConfiguration {
 
     @Bean
     public JwtDecoder jwtDecoder(JWKSource<SecurityContext> jwkSource) {
+        // Configures the JWT decoder with the provided JWK source
         return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource);
     }
 
-    /* Conhecendo e customizando endpoints do Authorization Server */
     @Bean
     public AuthorizationServerSettings authorizationServerSettings() {
+        // Customizes the endpoints of the authorization server
         return AuthorizationServerSettings.builder()
-                // Obter token
                 .tokenEndpoint("/oauth2/token")
-                // Utilizado para consultar status do token
                 .tokenIntrospectionEndpoint("/oauth2/introspect")
-                // Revoga o token
                 .tokenRevocationEndpoint("/oauth2/revoke")
-                // Authorization endpoint. Que utilizamos no AUTHORIZATION_CODE
                 .authorizationEndpoint("/oauth2/authorize")
-                // Obter informações do usuário OPEN ID CONNECT
                 .oidcUserInfoEndpoint("/oauth2/userinfo")
-                // Obter chave pública para verificar a assinatura do token
                 .jwkSetEndpoint("/oauth2/jwks")
-                // Logout
                 .oidcUserInfoEndpoint("/oauth2/logout")
                 .build();
     }
 
-    /* Adiciona informações customizadas no Token JWT */
     @Bean
     public OAuth2TokenCustomizer<JwtEncodingContext> tokenCustomizer() {
         return context -> {
@@ -151,10 +139,11 @@ public class AuthorizationServerConfiguration {
                             .getClaims()
                             .claim("authorities", authoritiesList)
                             .claim("email", authentication.getUser().getEmail())
-//                            .claim("birthDate", authentication.getUser().getBirthDate())
-                            .build();
+                            .claim("birthDate", authentication.getUser().getBirthDate().toString())
+                            .build(); // Adds custom claims to the access token
                 }
             }
         };
     }
 }
+

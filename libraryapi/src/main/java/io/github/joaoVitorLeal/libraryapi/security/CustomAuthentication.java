@@ -28,8 +28,8 @@ public class CustomAuthentication implements Authentication {
         return this.user
                 .getRoles()
                 .stream()
-                .map(SimpleGrantedAuthority::new) // .map(role -> new SimpleGrantedAuthority("ROLE_" + role)) - Caso queira seguir o padrão de prefixo de ROLES do Security. Nesta aplicação o prefíxo foi removido em SecurityConfiguration.
-                .collect(Collectors.toList()); // Retorna uma lista de SimpleGrantedAuthority
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
     }
 
     @Override

@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.springframework.context.annotation.Configuration;
 
-// DOC: configuração da documentação da Library API (SWAGGER)
 @Configuration
 @OpenAPIDefinition(
         info = @Info(
@@ -21,17 +20,17 @@ import org.springframework.context.annotation.Configuration;
                         url = "libraryapi.com"
                 )
         ),
-        // Adiciona o Botão de autenticação
         security = {
-                @SecurityRequirement(name = "bearerAuth") // Requisitando segurança do tipo bearerAuth
+                @SecurityRequirement(name = "bearerAuth")
         }
 )
-@SecurityScheme( // Definindo a bearerAuth para o @SecurityRequirement()
+@SecurityScheme(
         name = "bearerAuth",
-        type = SecuritySchemeType.HTTP, // Colocaremos o Token e ele irá enviar via HTTP
-        bearerFormat = "JWT", // Formato do bearer
+        type = SecuritySchemeType.HTTP,
+        bearerFormat = "JWT",
         scheme = "bearer",
-        in = SecuritySchemeIn.HEADER // Adiciona o Token no Header da requisição
+        in = SecuritySchemeIn.HEADER
 )
 public class OpenApiConfiguration {
 }
+

@@ -17,38 +17,33 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtGra
 import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 
-// RESOURCE SERVER DA APLICAÇÂO //
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true) // Habilita o uso de operações de segurança, como roles, authority, etc, nos Controllers da aplicação
+@EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 public class SecurityConfiguration {
-
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, LoginSocialSuccessHandler successHandler, JwtCustomAuthenticationFilter jwtCustomAuthenticationFilter) throws Exception {
 
         return http
-//                .httpBasic(Customizer.withDefaults()) // Removido na etapa de Documentação com Swagger
                 .csrf(AbstractHttpConfigurer::disable)
-                .formLogin(configurer ->
-                        configurer.loginPage("/login")
-                )
+                .formLogin(configurer -> configurer.loginPage("/login"))
                 .authorizeHttpRequests(authorize -> {
                     authorize.requestMatchers("/login").permitAll();
                     authorize.requestMatchers(HttpMethod.POST, "/users/**").permitAll();
-                    authorize.anyRequest().authenticated(); // Caso não seja configurado uma regra de acesso para determinar as roles, ele cairá nesta regra. E Apesar de estarem autenticado, não terá autorização para realizar requisições
+                    authorize.anyRequest().authenticated(); // Any request requires authentication
                 })
-                // Habilita o login via OAuth2 (não configurado, mas habilitado por padrão)
                 .oauth2Login(oauth2 -> {
-                    oauth2.loginPage("/login").successHandler(successHandler); // Passando a autenticação do Google já configurada para nossa aplicação em LoginSocialSuccessHandler.class
-                }).oauth2ResourceServer(oauth2RS -> oauth2RS.jwt(Customizer.withDefaults()))  // Habilitando JTW para validar usuário na aplicação. Será o Token Padrão.
+                    oauth2.loginPage("/login").successHandler(successHandler); // OAuth2 login with custom success handler
+                })
+                .oauth2ResourceServer(oauth2RS -> oauth2RS.jwt(Customizer.withDefaults())) // JWT authentication for OAuth2
                 .addFilterAfter(jwtCustomAuthenticationFilter, BearerTokenAuthenticationFilter.class)
                 .build();
     }
 
-    // Doc: Configura o Spring Security para ignorar a autenticação em requisições relacionadas à documentação da API (Swagger) e o Actuator. Ignorando os filtros do Security nas requisições vindas de URL's do Swagger e Actuator adicionadas
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
+        // Ignores security for API documentation (swagger) and Actuator endpoints
         return web -> web.ignoring().requestMatchers(
                 "/v2/api-docs/**",
                 "/v3/api-docs/**",
@@ -57,43 +52,23 @@ public class SecurityConfiguration {
                 "/swagger-ui/**",
                 "/webjars/**",
                 "/actuator/**"
-            );
+        );
     }
 
-    // CONFIGURA O PREFIXO SCOPE NO SECURITY
     @Bean
-    public GrantedAuthorityDefaults grantedAuthorityDefaults() { // Utilizando para remover o prefíxo 'ROLE_' do Security. Também é possível customizar prefíxos.
-        return new GrantedAuthorityDefaults("");
+    public GrantedAuthorityDefaults grantedAuthorityDefaults() {
+        return new GrantedAuthorityDefaults(""); // Removes the 'ROLE_' prefix for authorities
     }
 
-    // CONFIGURA, NO TOKEN JWT, O PREFIXO SCOPE
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
-        var authoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        authoritiesConverter.setAuthorityPrefix("");
+        JwtGrantedAuthoritiesConverter authoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        authoritiesConverter.setAuthorityPrefix("ROLE_"); // Prefix for authorities in JWT token
+        authoritiesConverter.setAuthoritiesClaimName("roles");
 
-        var converter = new JwtAuthenticationConverter();
-        converter.setJwtGrantedAuthoritiesConverter(authoritiesConverter);
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(authoritiesConverter);
 
-        return converter;
+        return jwtAuthenticationConverter;
     }
-
-    // (Foi transferido para o AuthorizationServerConfiguration.class) Codificador de senhas
-//    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder(10);
-
-//    }
-
-//    /**
-//     * @Deprecated -
-//     * Provia a autenticação através do UserDetails.
-//     * Agora sendo realizada no @see CustomAuthenticationProvider
-//     */
-//    @Bean ** ao comentar essa annotation esse métod0 deixa de ser 'visível'/gerenciado pela aplicação.
-//    @Deprecated
-//    protected UserDetailsService userDetailsService(UserService userService) {
-//        return new CustomUserDetailsService(userService);
-
-//    }
 }

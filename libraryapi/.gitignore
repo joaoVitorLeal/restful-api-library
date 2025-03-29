@@ -1,10 +1,6 @@
 # Files
 commands-sql.txt
 HELP.md
-m7_descricao.txt
-require.txt
-logs
-*.log
 
 # Build
 /target/
@@ -35,6 +31,7 @@ Thumbs.db
 
 # Environment
 .env
+env.vars
 
 ### STS ###
 .apt_generated

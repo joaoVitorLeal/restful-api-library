@@ -1,7 +1,7 @@
 # Cria uma rede de conexão entre dois containers. (OBS: deve ser criado antes dos containers)
 sudo docker network create library-network
 
-# Rodar container Postgre na versão 16.3
+# Rodar container Postgres na versão 16.3
 sudo docker run --name librarydb -p 5432:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres -e POSTGRES_DB=library --network library-network -d postgres:16.3
 
 # Rodar Pgadmin 4
@@ -28,3 +28,9 @@ sudo docker rm -f <nome_container>
 
  # Parar o container
  sudo docker stop <nome_container>
+
+ ---
+ ###### Produção ######
+ # Rodar container Postgres na versão 16.3
+sudo docker run --name librarydb-prod -e POSTGRES_USER=postgresprod -e POSTGRES_PASSWORD=postgresprod -e POSTGRES_DB=library -p 5433:5432 -d --network library-network postgres:16.3
+

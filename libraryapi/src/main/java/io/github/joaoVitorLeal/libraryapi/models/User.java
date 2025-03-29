@@ -26,7 +26,7 @@ public class User {
     @Column(nullable = false)
     private String name;
 
-    @Column(name = "birth_date")
+    @Column(name = "birth_date", nullable = false)
     private LocalDate birthDate;
 
     @Column(nullable = false)
@@ -38,9 +38,9 @@ public class User {
     @Column(nullable = false)
     private String email;
 
-    @Type(ListArrayType.class) // Faz a tradução de List para Array
+    @Type(ListArrayType.class) // Conversion using the hypersistence library
     @Column(name = "roles", columnDefinition = "varchar[]", nullable = false)
-    private List<String> roles; // No Java é uma lista de Strings, mas no banco é um Array, para fazer essa conversão usaremos a biblioteca hypersistence
+    private List<String> roles;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false)

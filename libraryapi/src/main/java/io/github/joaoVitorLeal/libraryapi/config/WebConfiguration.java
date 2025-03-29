@@ -7,12 +7,12 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-@EnableWebMvc // Habilitando MVC na aplicação, possibilitando criar paginas web
+@EnableWebMvc
 public class WebConfiguration implements WebMvcConfigurer {
 
     @Override
-    public void addViewControllers(ViewControllerRegistry registry) { // Registrando a View
-       registry.addViewController("/login").setViewName("login"); // Registando a página Web  na URL "/login" e nomeando a página como "login"
-       registry.setOrder(Ordered.HIGHEST_PRECEDENCE); // Ordenando registro com alta precedência
+    public void addViewControllers(ViewControllerRegistry registry) {
+       registry.addViewController("/login").setViewName("login");
+       registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
     }
 }
