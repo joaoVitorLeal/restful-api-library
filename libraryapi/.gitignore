@@ -33,6 +33,7 @@ Thumbs.db
 
 # Environment
 .env
+env.vars
 
 ### STS ###
 .apt_generated
