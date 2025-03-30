@@ -32,7 +32,8 @@ public class UserController implements GenericController {
     @PostMapping
     @Operation(summary = "Save", description = "Register a new user.")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "User successfully registered.")
+            @ApiResponse(responseCode = "201", description = "User successfully registered."),
+            @ApiResponse(responseCode = "409", description = "Username or Email already registered.")
     })
     public ResponseEntity<Void> save(@RequestBody @Valid UserRegistrationDTO dto) {
         log.info("Registering new user: username='{}', email='{}', roles={}.",

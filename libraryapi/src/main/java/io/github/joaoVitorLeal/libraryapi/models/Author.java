@@ -47,5 +47,6 @@ public class Author {
     private LocalDateTime lastUpdatedAt;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 }

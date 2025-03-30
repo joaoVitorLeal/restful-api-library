@@ -7,6 +7,7 @@ import io.github.joaoVitorLeal.libraryapi.repositories.AuthorRepository;
 import io.github.joaoVitorLeal.libraryapi.repositories.BookRepository;
 import io.github.joaoVitorLeal.libraryapi.security.SecurityService;
 import io.github.joaoVitorLeal.libraryapi.validator.AuthorValidator;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Example;
@@ -33,7 +34,8 @@ public class AuthorService {
         return authorRepository.save(author);
     }
 
-    public void update(@NotNull Author author) {
+//    @Transactional
+    public void update(Author author) {
         if (author.getId() == null) {
             throw new IllegalArgumentException("Cannot update an author that does not exist.");
         }

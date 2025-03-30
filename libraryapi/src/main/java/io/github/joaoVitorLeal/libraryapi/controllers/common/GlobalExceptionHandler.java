@@ -70,7 +70,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponseDTO handleUntreatedErrors(RuntimeException e) {
-        log.error("Unexpected error - Error details:", e); // Gera um log de erro interno do servidor com maiores detalhes.
+        log.error("Unexpected error - Error details:", e);
         return new ErrorResponseDTO(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "An unexpected error occurred. Please contact the administration.",

@@ -1,6 +1,7 @@
 # Files
 commands-sql.txt
 HELP.md
+.gitattributes
 
 # Build
 /target/

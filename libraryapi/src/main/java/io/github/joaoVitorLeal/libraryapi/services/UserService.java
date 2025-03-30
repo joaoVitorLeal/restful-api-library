@@ -2,6 +2,7 @@ package io.github.joaoVitorLeal.libraryapi.services;
 
 import io.github.joaoVitorLeal.libraryapi.models.User;
 import io.github.joaoVitorLeal.libraryapi.repositories.UserRepository;
+import io.github.joaoVitorLeal.libraryapi.validator.UserValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,11 +16,12 @@ public class UserService {
 
     private final UserRepository repository;
     private final PasswordEncoder encoder;
+    private final UserValidator validator;
 
     public void save(User user) {
         var password = user.getPassword();
         user.setPassword(encoder.encode(password));
-
+        validator.validate(user);
         repository.save(user);
     }
 

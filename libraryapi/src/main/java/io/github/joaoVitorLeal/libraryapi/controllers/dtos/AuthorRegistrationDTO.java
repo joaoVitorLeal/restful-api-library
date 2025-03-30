@@ -11,6 +11,8 @@ import java.util.UUID;
 import static io.github.joaoVitorLeal.libraryapi.constants.ValidationMessages.*;
 
 public record AuthorRegistrationDTO(
+        UUID id,
+
         @NotBlank(message = REQUIRED_FIELD_MESSAGE)
         @Size(min = 2, max = 100, message = FIELD_SIZE_MESSAGE)
         String name,

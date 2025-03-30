@@ -4,6 +4,7 @@ import io.github.joaoVitorLeal.libraryapi.exceptions.DuplicateRegistrationExcept
 import io.github.joaoVitorLeal.libraryapi.models.Author;
 import io.github.joaoVitorLeal.libraryapi.repositories.AuthorRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -13,13 +14,16 @@ import java.util.Optional;
  * name + birthdate + nationality
  */
 @Component
-@RequiredArgsConstructor // Injeção automática dos atributos que sejam FINAL no construtor
+@RequiredArgsConstructor
+@Slf4j
 public class AuthorValidator {
 
     private final AuthorRepository repository;
 
     public void validate(Author author) {
+        log.info("Validating author: {}", author);
         if (isAuthorRegistered(author)){
+            log.warn("Duplicate registration attempt: {}", author);
             throw new DuplicateRegistrationException("Duplicate Registration");
         }
     }
@@ -32,10 +36,12 @@ public class AuthorValidator {
                 author.getNationality()
         );
 
-        if (author.getId() == null){
+        if (author.getId() == null) {
             return possibleAuthor.isPresent();
         }
 
-        return !author.getId().equals(possibleAuthor.get().getId()) && possibleAuthor.isPresent();
+        return possibleAuthor
+                .filter(value -> !value.getId().equals(author.getId()))
+                .isPresent();
     }
 }
