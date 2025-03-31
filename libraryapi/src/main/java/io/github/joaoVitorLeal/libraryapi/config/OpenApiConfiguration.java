@@ -13,11 +13,22 @@ import org.springframework.context.annotation.Configuration;
 @OpenAPIDefinition(
         info = @Info(
                 title = "Library API",
-                version = "v1",
+                version = "1.0",
+                description = """ 
+                        ***📚 Library Management API RESTful*** \s
+                        
+                        **Core Features:** 📖 CRUD | 🔐 JWT Auth | 👥 Role-based Access | 🔍 Advanced Search \s
+                        
+                        **🛡️ Security:** `Authorization: Bearer {token}` | 🔑 Token via `POST /oauth/token` (client_credentials) \s
+                        
+                        **👮 Roles:** MANAGER: Full access | OPERATOR: Full operations in Book, and constraints in Author \s
+                        
+                        **⚠️ Key Constraints:** Unique ISBN | Post-2020 books require price | Authors with books cannot be deleted \s
+                        """,
                 contact = @Contact(
                         name = "João Leal",
                         email = "joaoleal98@outlook.com",
-                        url = "libraryapi.com"
+                        url = "https://github.com/joaoVitorLeal"
                 )
         ),
         security = {

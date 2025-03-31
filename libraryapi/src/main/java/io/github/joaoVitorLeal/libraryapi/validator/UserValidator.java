@@ -27,11 +27,11 @@ public class UserValidator {
     private boolean isUserRegistered(User user) {
         Optional<User> userOptional = userRepository.findByUsernameOrEmail(user.getUsername(), user.getEmail());
         if (userOptional.isEmpty()) {
-            return userOptional.isPresent();
+            return false;
         }
         if (user.getId() == null) {
             return userOptional.isPresent();
         }
-        return !userOptional.get().getId().equals(user.getId());
+        return !userOptional.get().getId().equals(user.getId()) && userOptional.isPresent();
     }
 }

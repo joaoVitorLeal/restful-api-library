@@ -34,7 +34,6 @@ public class AuthorService {
         return authorRepository.save(author);
     }
 
-//    @Transactional
     public void update(Author author) {
         if (author.getId() == null) {
             throw new IllegalArgumentException("Cannot update an author that does not exist.");

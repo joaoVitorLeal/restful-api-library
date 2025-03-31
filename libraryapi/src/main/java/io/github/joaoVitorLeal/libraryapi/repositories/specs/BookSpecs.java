@@ -47,5 +47,4 @@ public class BookSpecs {
             return cb.like( cb.upper(root.get("author").get("name")),  "%" + authorName.toUpperCase() + "%" );
         };
     }
-
 }

@@ -30,7 +30,8 @@ public class ClientController {
     @PreAuthorize("hasRole('MANAGER')")
     @Operation(summary = "Save", description = "Register a new client.")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Client successfully registered.")
+            @ApiResponse(responseCode = "201", description = "Client successfully registered."),
+
     })
     public void save(@RequestBody @Valid ClientRegistrationDTO dto) {
         log.info("Registering new client: ID='{}', scope='{}'.", dto.clientId(), dto.scope());

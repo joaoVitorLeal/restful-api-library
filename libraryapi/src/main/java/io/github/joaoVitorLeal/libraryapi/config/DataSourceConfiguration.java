@@ -13,11 +13,11 @@ import javax.sql.DataSource;
 @Slf4j
 public class DataSourceConfiguration {
 
-    @Value("${spring.datasource.url}")
+    @Value("${DATASOURCE_URL}")
     String url;
-    @Value("${spring.datasource.username}")
+    @Value("${DATASOURCE_USERNAME}")
     String username;
-    @Value("${spring.datasource.password}")
+    @Value("${DATASOURCE_PASSWORD}")
     String password;
     @Value("${spring.datasource.driver-class-name}")
     String driver;
