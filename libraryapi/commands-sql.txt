@@ -1,0 +1,62 @@
+CREATE TABLE author (
+    id UUID NOT NULL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    birth_date DATE NOT NULL,
+    nationality VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP,
+    last_updated_at TIMESTAMP,
+    user_id UUID
+);
+
+CREATE TABLE book (
+    id UUID NOT NULL PRIMARY KEY,
+    isbn VARCHAR(20) NOT NULL UNIQUE,
+    title VARCHAR(150) NOT NULL,
+    publication_date DATE NOT NULL,
+    genre VARCHAR(30) NOT NULL,
+    price NUMERIC(18, 2),
+    created_at TIMESTAMP,
+    last_updated_at TIMESTAMP,
+    user_id UUID,
+	id_author UUID NOT NULL REFERENCES author(id),
+    CONSTRAINT chk_genre CHECK (genre IN ('FICTION', 'FANTASY', 'MISTERY', 'ROMANCE', 'BIOGRAPHY', 'SCIENCE'))
+);
+
+CREATE TABLE users(
+    id UUID NOT NULL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    birth_date DATE NOT NULL,
+    username VARCHAR(20) NOT NULL UNIQUE,
+    password VARCHAR(400) NOT NULL,
+    roles VARCHAR[] NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    created_at TIMESTAMP NOT NULL,
+    last_updated_at TIMESTAMP NOT NULL
+);
+
+CREATE TABLE client(
+    id UUID NOT NULL PRIMARY KEY,
+	client_id VARCHAR(150) NOT NULL,
+	client_secret VARCHAR(400) NOT NULL,
+	redirect_uri VARCHAR(300) NOT NULL,
+	scope VARCHAR(50) NOT NULL
+);
+
+
+--- To create a User and Client directly from the database:
+-- First enable the function to generate a version 4 UUID
+for user creation:
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+INSERT INTO users
+(id, name, birth_date, username, password, roles, email, created_at, last_updated_at)
+VALUES
+(uuid_generate_v4(), 'Your Name', '1998-01-01', 'manager1',
+ 'your password preferably encrypted',
+ '{MANAGER}', 'manager1@libraryapi.com', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO
+ 	client (id, client_id, client_secret, redirect_uri, scope)
+ VALUES
+ 	(uuid-generate_v4(), 'client-production', 'your client-secret preferably encrypted',
+	 'http://host:port/authorized', 'MANAGER');
