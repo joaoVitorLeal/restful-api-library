@@ -1,5 +1,4 @@
 # Files
-commands-sql.txt
 HELP.md
 .gitattributes
 
@@ -49,6 +48,7 @@ env.vars
 *.iws
 *.iml
 *.ipr
+
 
 ### NetBeans ###
 /nbproject/private/
