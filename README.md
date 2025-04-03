@@ -67,6 +67,95 @@ Library API RESTful is a robust backend service built with Java 21 and Spring Bo
 - **JUnit Jupiter 5.x**
 
 ---
+## Project Structure
+
+```bash
+└── libraryapi
+    └── src
+        ├── main
+            ├── java
+            │   └── io
+            │   │   └── github
+            │   │       └── joaoVitorLeal
+            │   │           └── libraryapi
+            │   │               ├── Application.java
+            │   │               ├── config
+            │   │                   ├── AuthorizationServerConfiguration.java
+            │   │                   ├── DataSourceConfiguration.java
+            │   │                   ├── OpenApiConfiguration.java
+            │   │                   ├── SecurityConfiguration.java
+            │   │                   └── WebConfiguration.java
+            │   │               ├── constants
+            │   │                   └── ValidationMessages.java
+            │   │               ├── controllers
+            │   │                   ├── AuthorController.java
+            │   │                   ├── BookController.java
+            │   │                   ├── ClientController.java
+            │   │                   ├── GenericController.java
+            │   │                   ├── LoginViewController.java
+            │   │                   ├── UserController.java
+            │   │                   ├── common
+            │   │                   │   └── GlobalExceptionHandler.java
+            │   │                   ├── dtos
+            │   │                   │   ├── AuthorRegistrationDTO.java
+            │   │                   │   ├── AuthorResponseDTO.java
+            │   │                   │   ├── BookRegistrationDTO.java
+            │   │                   │   ├── BookSearchResultDTO.java
+            │   │                   │   ├── ClientRegistrationDTO.java
+            │   │                   │   ├── ClientResponseDTO.java
+            │   │                   │   ├── ErrorResponseDTO.java
+            │   │                   │   ├── UserRegistrationDTO.java
+            │   │                   │   ├── UserResponseDTO.java
+            │   │                   │   └── ValidationErrorDTO.java
+            │   │                   └── mappers
+            │   │                   │   ├── AuthorMapper.java
+            │   │                   │   ├── BookMapper.java
+            │   │                   │   ├── ClientMapper.java
+            │   │                   │   └── UserMapper.java
+            │   │               ├── exceptions
+            │   │                   ├── BusinessRuleException.java
+            │   │                   ├── DuplicateRegistrationException.java
+            │   │                   └── OperationNotPermittedException.java
+            │   │               ├── models
+            │   │                   ├── Author.java
+            │   │                   ├── Book.java
+            │   │                   ├── BookGenre.java
+            │   │                   ├── Client.java
+            │   │                   └── User.java
+            │   │               ├── repositories
+            │   │                   ├── AuthorRepository.java
+            │   │                   ├── BookRepository.java
+            │   │                   ├── ClientRepository.java
+            │   │                   ├── UserRepository.java
+            │   │                   └── specs
+            │   │                   │   └── BookSpecs.java
+            │   │               ├── security
+            │   │                   ├── CustomAuthentication.java
+            │   │                   ├── CustomAuthenticationProvider.java
+            │   │                   ├── CustomRegisteredClientRepository.java
+            │   │                   ├── CustomUserDetailsService.java
+            │   │                   ├── JwtCustomAuthenticationFilter.java
+            │   │                   ├── LoginSocialSuccessHandler.java
+            │   │                   ├── SecurityService.java
+            │   │                   └── utils
+            │   │                   │   └── PasswordGenerator.java
+            │   │               ├── services
+            │   │                   ├── AuthorService.java
+            │   │                   ├── BookService.java
+            │   │                   ├── ClientService.java
+            │   │                   ├── TransactionService.java
+            │   │                   └── UserService.java
+            │   │               └── validator
+            │   │                   ├── AuthorValidator.java
+            │   │                   ├── BookValidator.java
+            │   │                   ├── ClientValidator.java
+            │   │                   └── UserValidator.java
+            └── resources
+                ├── application.yml
+                └── templates
+                    └── login.html
+```
+---
 
 ## Installation & Setup
 
