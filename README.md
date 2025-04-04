@@ -69,6 +69,9 @@ Library API RESTful is a robust backend service built with Java 21 and Spring Bo
 ---
 ## Project Structure
 
+<details>
+  <summary>Click to expand</summary>
+  
 ```bash
 └── libraryapi
     └── src
@@ -155,6 +158,9 @@ Library API RESTful is a robust backend service built with Java 21 and Spring Bo
                 └── templates
                     └── login.html
 ```
+
+  </details>
+  
 ---
 
 ## Installation & Setup
