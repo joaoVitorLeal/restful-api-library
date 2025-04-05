@@ -1,0 +1,6 @@
+.gitattributes
+.gitignore
+env.vars
+HELP.md
+./logs
+./src/test
