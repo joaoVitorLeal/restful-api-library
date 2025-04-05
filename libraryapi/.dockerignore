@@ -1,5 +1,7 @@
 .gitattributes
 .gitignore
 HELP.md
+commands-docker.txt
+commands-sql.txt
 ./logs
 ./src/test
