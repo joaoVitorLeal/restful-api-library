@@ -120,7 +120,7 @@ public class AuthorizationServerConfiguration {
                 .authorizationEndpoint("/oauth2/authorize")
                 .oidcUserInfoEndpoint("/oauth2/userinfo")
                 .jwkSetEndpoint("/oauth2/jwks")
-                .oidcUserInfoEndpoint("/oauth2/logout")
+                .oidcLogoutEndpoint("/oauth2/logout")
                 .build();
     }
 
@@ -135,6 +135,7 @@ public class AuthorizationServerConfiguration {
                 if (OAuth2TokenType.ACCESS_TOKEN.equals(tokenType)) {
                     Collection<GrantedAuthority> authorities = authentication.getAuthorities();
                     List<String> authoritiesList = authorities.stream().map(GrantedAuthority::getAuthority).toList();
+
                     context
                             .getClaims()
                             .claim("authorities", authoritiesList)
