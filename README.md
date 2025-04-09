@@ -1,4 +1,4 @@
-# Library API RESTful
+# Library Nexus - API RESTful
 
 [![Java 21](https://img.shields.io/badge/Java-21-blue.svg)](https://www.oracle.com/java/)
 [![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.3.6-brightgreen.svg)](https://spring.io/projects/spring-boot)
