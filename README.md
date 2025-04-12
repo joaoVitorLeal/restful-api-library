@@ -10,7 +10,6 @@
 [![Swagger/OpenAPI](https://img.shields.io/badge/Swagger_OpenAPI-2.6.0-orange.svg)](https://springdoc.org)
 [![Docker](https://img.shields.io/badge/Docker-20.10-blue.svg)](https://www.docker.com)
 [![Postman](https://img.shields.io/badge/Postman-Agent-blue.svg)](https://www.postman.com)
-[![JUnit Jupiter](https://img.shields.io/badge/JUnit_Jupiter-5.x-green.svg)](https://junit.org/junit5)
 
 ---
 
@@ -64,7 +63,6 @@ Library API RESTful is a robust backend service built with Java 21 and Spring Bo
 - **Swagger/OpenAPI 2.6.0**
 - **Docker**
 - **Postman Agent:** Used for API testing and consumption
-- **JUnit Jupiter 5.x**
 
 ---
 ## Project Structure
