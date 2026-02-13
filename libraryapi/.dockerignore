@@ -7,7 +7,9 @@ commands-sql.txt
 ./src/test
 .gitattributes
 .gitignore
-env.vars
+env.vars.txt
 HELP.md
+commands-docker.txt
+commands-sql.txt
 ./logs
 ./src/test

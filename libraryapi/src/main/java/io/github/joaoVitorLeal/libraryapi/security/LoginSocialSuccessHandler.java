@@ -52,12 +52,14 @@ public class LoginSocialSuccessHandler extends SavedRequestAwareAuthenticationSu
 
         // Replace OAuth2 authentication with custom authentication.
         authentication = new CustomAuthentication(user);
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
         super.onAuthenticationSuccess(request, response, authentication);
     }
 
     // New users via social login are assigned the 'OPERATOR' role by default.
-    private @NotNull User registerUserInDataBase(String email, String name) {
+    private User registerUserInDataBase(String email, String name) {
         User user;
         user = new User();
         user.setEmail(email);
