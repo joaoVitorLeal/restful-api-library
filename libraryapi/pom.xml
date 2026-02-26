@@ -10,7 +10,7 @@
 		<relativePath/> <!-- lookup parent from authorRepository -->
 	</parent>
 
-	<groupId>io.github.joaoVitorLeal</groupId>
+	<groupId>io.github.jvlealc</groupId>
 	<artifactId>libraryapi</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>libraryapi</name>
